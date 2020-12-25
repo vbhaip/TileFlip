@@ -29,7 +29,8 @@ class App extends React.Component {
       'play': false,
       'editor_val': `function rule(ctx){
 
-        }`
+        }`,
+      'refreshRate': 1000
       }
 
     this.sliderUpdate = this.sliderUpdate.bind(this);
@@ -37,6 +38,15 @@ class App extends React.Component {
 
     this.temp = this.temp.bind(this);
 
+    this.updateRefresh = this.updateRefresh.bind(this);
+
+  }
+
+  updateRefresh(e, val){
+    console.log(val);
+    this.setState({
+      'refreshRate': val
+    });
   }
 
   handleRuleChange(e) {
@@ -116,7 +126,22 @@ class App extends React.Component {
 
         <div id='vis-container'>
           <Visualization id="viz" edgeLength={this.state.edgeLength} size={window.innerWidth*.25} rule={this.state.rule}
-           play={this.state.play}/>
+           play={this.state.play} refreshRate={this.state.refreshRate}/>
+
+           <br/>
+           Refresh Rate (ms)
+           <br/>
+
+           <Slider
+            defaultValue={1000}
+            valueLabelDisplay="auto"
+            step={100}
+            marks
+            min={200}
+            max={2000}
+            style={{'width': '50%'}}
+            onChange={this.updateRefresh}
+           />
           {
           // <Slider
                   // defaultValue={10}

@@ -49,13 +49,15 @@ class Visualization extends React.Component {
 		this.mod = this.mod.bind(this)
 		this.floatToGrayscale = this.floatToGrayscale.bind(this)
 		this.floatToHSL = this.floatToHSL.bind(this);
+
+		this.refresh = this.refresh.bind(this);
 	}
 
 	updateVis(){	
 		// console.log(this.state.data)
 
 		this.viscontainer
-			.selectAll("rect")
+			.selectAll(".main-rect")
 			.data(this.state.data)
 			// .attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
 			.attr("fill", (d,i) => {
@@ -206,14 +208,37 @@ class Visualization extends React.Component {
 
 		let outerthis = this;
 
+
+
+		//background color
 		this.viscontainer
-			.selectAll("rect")
+			.append('g')
+			.selectAll(".background-rect")
 			.data(this.state.data)
 			.enter()
 			.append("rect")
+			.attr("class", 'background-rect')
+			.attr("fill", (d,i) => {return 'white'})
+			.attr("stroke-width", 2)
+			.attr("stroke", "black")
+			.attr("x", (d,i) => this.xScale(d.x))
+			.attr("y", (d,i) => this.yScale(d.y))
+			.attr("rx", (d,i) => this.squareLength*.2)
+			.attr("ry", (d,i) => this.squareLength*.2)
+			.attr("width", this.squareLength)
+			.attr("height", this.squareLength)
+
+
+
+		this.viscontainer
+			.selectAll(".main-rect")
+			.data(this.state.data)
+			.enter()
+			.append("rect")
+			.attr("class", 'main-rect')
 			.attr("id", (d,i) => d.index)
 			// .attr("fill", (d,i) => {return d.state ? "black" : "white"})
-			.attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
+			.attr("fill", (d,i) => {return d.color === '' ? 'white' : d.color;})
 			.attr("stroke-width", 2)
 			.attr("stroke", "black")
 			.attr("x", (d,i) => this.xScale(d.x))
@@ -227,7 +252,8 @@ class Visualization extends React.Component {
 				// console.log(e)
 				// console.log(d)
 				outerthis.setState((prevState) => {
-					
+
+
 					let newState = prevState.data.map((item, index) => {
 						if(index === d.index){
 							let tempitem = {...item};
@@ -252,29 +278,46 @@ class Visualization extends React.Component {
 				})
 				outerthis.updateVis();
 			})
-
-
 		
+		this.refresh();
 
 	}
 
+	refresh(){
+
+		if(this.props.play){
+			this.computeNextState();
+			this.updateVis()
+		}
+
+		setTimeout(this.refresh, this.props.refreshRate);
+		
+	}
+
+
 
 	componentDidUpdate(prevProps){
-		if(this.props.play !== prevProps.play){
-			if(this.props.play){
-				let interval = setInterval(()=>{this.computeNextState(); this.updateVis();}, 1000);
-				this.setState({
-					'interval': interval
-				})
-			}
-			else{
-				clearInterval(this.state.interval)
-				this.setState({
-					'interval': null
-				})
+		// if(this.props.play !== prevProps.play){
+		// 	if(this.props.play){
+		// 		this.refresh()
 
-			}
-		}
+		// 		// //clear interval jic
+		// 		// clearInterval(this.state.interval);
+
+		// 		// let interval = setInterval(()=>{this.computeNextState(); this.updateVis();}, this.props.refreshRate);
+		// 		// this.setState({
+		// 		// 	'interval': interval
+		// 		// })
+		// 	}
+		// 	// else{
+		// 	// 	clearInterval(this.state.interval)
+		// 	// 	this.setState({
+		// 	// 		'interval': null
+		// 	// 	})
+
+		// 	// }
+		// }
+
 	}
 
 
