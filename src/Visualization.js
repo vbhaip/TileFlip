@@ -20,7 +20,9 @@ class Visualization extends React.Component {
 			data.push({'index': i, 'x': i%this.edgeLength, 'y': Math.floor(i/this.edgeLength), 'state': 0})
 		}
 
-		this.state = {'data': data};
+		this.state = {'data': data,
+				'interval': null
+			};
 
 		this.margin = {'top': this.edgeLength*.1, 'bottom': this.edgeLength*.1, 'left': this.edgeLength*.1, 'right': this.edgeLength*.1}
 
@@ -44,6 +46,8 @@ class Visualization extends React.Component {
 		this.computeNeighbors = this.computeNeighbors.bind(this);
 
 		this.mod = this.mod.bind(this)
+		this.floatToGrayscale = this.floatToGrayscale.bind(this)
+		this.floatToHSL = this.floatToHSL.bind(this);
 	}
 
 	updateVis(){	
@@ -52,7 +56,7 @@ class Visualization extends React.Component {
 		this.viscontainer
 			.selectAll("rect")
 			.data(this.state.data)
-			.attr("fill", (d,i) => {return d.state ? "black" : "white"})
+			.attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
 			.transition(1000)
 	}
 
@@ -83,22 +87,57 @@ class Visualization extends React.Component {
 		let up = this.computeVal(this.mod((index - this.edgeLength),(this.edgeLength**2)));
 		let down = this.computeVal(this.mod((index + this.edgeLength),(this.edgeLength**2)));
 
-		let left = index%this.edgeLength==0 ? this.computeVal(index+this.edgeLength-1) : this.computeVal(index - 1);
-		let right = (index+1)%this.edgeLength==0 ? this.computeVal(index-this.edgeLength+1) : this.computeVal(index + 1)
 
-		return [up, right, down, left]
+		let rawleft = index%this.edgeLength==0 ? index+this.edgeLength-1 : index - 1;
+		let left = this.computeVal(rawleft);
+
+		let rawright = (index+1)%this.edgeLength==0 ? index-this.edgeLength+1 : index + 1;
+		let right = this.computeVal(rawright);
+
+
+		let upleft = this.computeVal(this.mod((rawleft - this.edgeLength),(this.edgeLength**2)));
+		let downleft = this.computeVal(this.mod((rawleft + this.edgeLength),(this.edgeLength**2)));
+		
+		let upright = this.computeVal(this.mod((rawright - this.edgeLength),(this.edgeLength**2)));
+		let downright = this.computeVal(this.mod((rawright + this.edgeLength),(this.edgeLength**2)));
+
+
+		return [upleft, up, upright, right, downright, down, downleft, left]
 	}
 
+	floatToGrayscale(val){
+		//https://stackoverflow.com/questions/16179713/converting-float-values-to-a-grayscale-hex-color-value
+		// console.log(val)
+		let dec = 255 * (1-val);
+		let encoding = Number(parseInt(dec, 10)).toString(16);
+		// console.log("#" + encoding.repeat(3))
+		return "#" + encoding.repeat(3);
+	}
+
+	floatToHSL(val){
+		return "hsl(" + Math.round(360*val) + ", 100%, 50%)" 
+	}
 
 	computeNextState(){
 		this.setState((prevState) => {
 			let newState = prevState.data.map((item, index) => {
 				let neighbors = this.computeNeighbors(index);
-				neighbors.up = neighbors[0]
-				neighbors.right = neighbors[1]
-				neighbors.down = neighbors[2]
-				neighbors.left = neighbors[3]
+				neighbors.upleft = neighbors[0]
+				neighbors.up = neighbors[1]
+				neighbors.upright = neighbors[2]
+				neighbors.right = neighbors[3]
+				neighbors.downright = neighbors[4]
+				neighbors.down = neighbors[5]
+				neighbors.downleft = neighbors[6]
+				neighbors.left = neighbors[7]
+
+				// console.log(neighbors)
+
 				neighbors.curr = item.state
+				neighbors.ones = neighbors.filter(x => x === 1).length
+				neighbors.zeroes = neighbors.filter(x => x === 0).length
+				neighbors.corners = neighbors.filter((x,i) => {return x === 1 && (i%2 === 0)}).length
+				neighbors.sides = neighbors.filter((x,i) => {return x === 1 && (i%2 === 1)}).length
 
 				let n = neighbors;
 
@@ -112,7 +151,7 @@ class Visualization extends React.Component {
 
 				let value = this.props.rule(n);
 
-				if(value === 1 || value === 0){
+				if(typeof value === 'number'){
 					tempitem.state = value;
 				}
 
@@ -153,7 +192,8 @@ class Visualization extends React.Component {
 			.enter()
 			.append("rect")
 			.attr("id", (d,i) => d.index)
-			.attr("fill", (d,i) => {return d.state ? "black" : "white"})
+			// .attr("fill", (d,i) => {return d.state ? "black" : "white"})
+			.attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
 			.attr("stroke-width", 2)
 			.attr("stroke", "black")
 			.attr("x", (d,i) => this.xScale(d.x))
@@ -171,7 +211,15 @@ class Visualization extends React.Component {
 					let newState = prevState.data.map((item, index) => {
 						if(index === d.index){
 							let tempitem = {...item};
-							tempitem.state = 1 - tempitem.state;
+
+							if(tempitem.state < 0.5){
+								tempitem.state = 1;
+							}
+							else{
+								tempitem.state = 0;
+							}
+
+							// tempitem.state = 1 - tempitem.state;
 							// console.log(tempitem)
 							return tempitem;
 						}
@@ -186,8 +234,27 @@ class Visualization extends React.Component {
 			})
 
 
-		setInterval(()=>{this.computeNextState(); this.updateVis();}, 1000)
+		
 
+	}
+
+
+	componentDidUpdate(prevProps){
+		if(this.props.play !== prevProps.play){
+			if(this.props.play){
+				let interval = setInterval(()=>{this.computeNextState(); this.updateVis();}, 1000);
+				this.setState({
+					'interval': interval
+				})
+			}
+			else{
+				clearInterval(this.state.interval)
+				this.setState({
+					'interval': null
+				})
+
+			}
+		}
 	}
 
 
