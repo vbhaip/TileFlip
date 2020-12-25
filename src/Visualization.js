@@ -17,7 +17,8 @@ class Visualization extends React.Component {
 		this.size = this.props.size;
 
 		for(let i = 0; i < this.edgeLength**2; i++){
-			data.push({'index': i, 'x': i%this.edgeLength, 'y': Math.floor(i/this.edgeLength), 'state': 0})
+			data.push({'index': i, 'x': i%this.edgeLength, 'y': Math.floor(i/this.edgeLength), 
+				'state': 0, 'color': ''})
 		}
 
 		this.state = {'data': data,
@@ -56,7 +57,11 @@ class Visualization extends React.Component {
 		this.viscontainer
 			.selectAll("rect")
 			.data(this.state.data)
-			.attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
+			// .attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
+			.attr("fill", (d,i) => {
+				return d.color === '' ? 'black' : d.color;
+			})
+			.attr("fill-opacity", (d,i) => {return d.state})
 			.transition(1000)
 	}
 
@@ -109,7 +114,7 @@ class Visualization extends React.Component {
 		//https://stackoverflow.com/questions/16179713/converting-float-values-to-a-grayscale-hex-color-value
 		// console.log(val)
 		let dec = 255 * (1-val);
-		let encoding = Number(parseInt(dec, 10)).toString(16);
+		let encoding = ("0" + Number(parseInt(dec, 10)).toString(16)).slice(-2);
 		// console.log("#" + encoding.repeat(3))
 		return "#" + encoding.repeat(3);
 	}
@@ -139,7 +144,11 @@ class Visualization extends React.Component {
 				neighbors.corners = neighbors.filter((x,i) => {return x === 1 && (i%2 === 0)}).length
 				neighbors.sides = neighbors.filter((x,i) => {return x === 1 && (i%2 === 1)}).length
 
-				let n = neighbors;
+				let ctx = neighbors;
+
+				ctx.index = index
+				ctx.x = item.x
+				ctx.y = item.y
 
 
 				// return this.props.rule(n)
@@ -149,10 +158,19 @@ class Visualization extends React.Component {
 				// tempitem.state = this.props.rule(n)
 				// console.log(this.props.rule(n))
 
-				let value = this.props.rule(n);
+				let value = this.props.rule(ctx);
+
+				console.log(ctx)
 
 				if(typeof value === 'number'){
 					tempitem.state = value;
+				}
+
+				if(ctx.color !== ''){
+					tempitem.color = ctx.color;
+				}
+				else{
+					tempitem.color = '';
 				}
 
 				// //substitute rule here
