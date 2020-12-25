@@ -160,7 +160,7 @@ class Visualization extends React.Component {
 
 				let value = this.props.rule(ctx);
 
-				console.log(ctx)
+				// console.log(ctx)
 
 				if(typeof value === 'number'){
 					tempitem.state = value;
@@ -172,6 +172,8 @@ class Visualization extends React.Component {
 				else{
 					tempitem.color = '';
 				}
+
+
 
 				// //substitute rule here
 

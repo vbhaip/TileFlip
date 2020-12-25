@@ -114,48 +114,55 @@ class App extends React.Component {
     return (
       <div className="App">
 
-        <Visualization id="viz" edgeLength={this.state.edgeLength} size={window.innerWidth*.25} rule={this.state.rule}
-         play={this.state.play}/>
-        {
-        // <Slider
-                // defaultValue={10}
-                // valueLabelDisplay="auto"
-                // step={1}
-                // marks
-                // min={4}
-                // max={20}
-                // onChange={this.sliderUpdate}
-                // style={{"width": "50%"}}/>
-              }
+        <div id='vis-container'>
+          <Visualization id="viz" edgeLength={this.state.edgeLength} size={window.innerWidth*.25} rule={this.state.rule}
+           play={this.state.play}/>
+          {
+          // <Slider
+                  // defaultValue={10}
+                  // valueLabelDisplay="auto"
+                  // step={1}
+                  // marks
+                  // min={4}
+                  // max={20}
+                  // onChange={this.sliderUpdate}
+                  // style={{"width": "50%"}}/>
+                }
 
+        </div>
         {
         //<TextField variant="outlined" onChange={this.handleRuleChange} multiline={true}/>
         }
-        <AceEditor
-          // placeholder="Placeholder Text"
-          mode="javascript"
-          theme="monokai"
-          name="editor"
-          onLoad={this.temp}
-          onChange={this.handleRuleChangeAce}
-          fontSize={14}
-          showPrintMargin={true}
-          showGutter={true}
-          highlightActiveLine={true}
-          value={this.state.editor_val}
-          setOptions={{
-          enableBasicAutocompletion: true,
-          enableLiveAutocompletion: true,
-          enableSnippets: false,
-          showLineNumbers: true,
-          tabSize: 2,
-          }}
+        <div id='controls-container'>
 
-          />
-                    
-        <Button variant="contained" color="primary" onClick={this.handlePlayChange}>
-            {this.state.play ? "Pause" : "Play"}
-          </Button>
+          <AceEditor
+            // placeholder="Placeholder Text"
+            mode="javascript"
+            theme="monokai"
+            name="editor"
+            onLoad={this.temp}
+            onChange={this.handleRuleChangeAce}
+            fontSize={14}
+            showPrintMargin={true}
+            showGutter={true}
+            highlightActiveLine={true}
+            value={this.state.editor_val}
+            height={window.innerWidth*.3}
+            setOptions={{
+            enableBasicAutocompletion: true,
+            enableLiveAutocompletion: true,
+            enableSnippets: false,
+            showLineNumbers: true,
+            tabSize: 2,
+            }}
+
+            />
+                      
+          <Button variant="contained" color="primary" onClick={this.handlePlayChange}>
+              {this.state.play ? "Pause" : "Play"}
+            </Button>
+
+          </div>
       </div>
     );
   }

@@ -36,3 +36,27 @@
     transform: rotate(360deg);
   }
 }
+
+#vis-container{
+  width: 50vw;
+  height: 90vh;
+  /*background: green;*/
+  float: left;
+  padding-top: 10vh;
+}
+
+#controls-container{
+  width: 50vw;
+  height: 90vh;
+  /*background: red;*/
+  float: left;
+  text-align: center;
+  padding-top: 10vh;
+}
+
+#editor {
+    position: relative;
+    margin: 0 auto;
+    margin-bottom: 10vh;
+
+}
