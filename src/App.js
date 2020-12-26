@@ -33,7 +33,7 @@ class App extends React.Component {
       'refreshRate': 1000
       }
 
-    this.sliderUpdate = this.sliderUpdate.bind(this);
+    this.updateResolution = this.updateResolution.bind(this);
     this.handlePlayChange = this.handlePlayChange.bind(this);
 
     this.temp = this.temp.bind(this);
@@ -101,9 +101,9 @@ class App extends React.Component {
 
   }
 
-  sliderUpdate(e){
+  updateResolution(e, val){
     this.setState({
-      'edgeLength': e.target.value
+      'edgeLength': val
     })
   }
 
@@ -142,17 +142,21 @@ class App extends React.Component {
             style={{'width': '50%'}}
             onChange={this.updateRefresh}
            />
-          {
-          // <Slider
-                  // defaultValue={10}
-                  // valueLabelDisplay="auto"
-                  // step={1}
-                  // marks
-                  // min={4}
-                  // max={20}
-                  // onChange={this.sliderUpdate}
-                  // style={{"width": "50%"}}/>
-                }
+          
+           <br/>
+           Resolution
+           <br/>
+
+          <Slider
+            defaultValue={10}
+            valueLabelDisplay="auto"
+            step={1}
+            marks
+            min={4}
+            max={15}
+            onChange={this.updateResolution}
+            style={{"width": "50%"}}/>
+                
 
         </div>
         {

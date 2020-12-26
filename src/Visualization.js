@@ -11,6 +11,37 @@ class Visualization extends React.Component {
 	constructor(props){
 		super(props);
 
+		this.state = {'data': [],
+				'interval': null
+			};
+		
+
+		this.updateVis = this.updateVis.bind(this);
+
+		this.computeNextState = this.computeNextState.bind(this);
+
+		this.computeVal = this.computeVal.bind(this)
+		this.computeNeighbors = this.computeNeighbors.bind(this);
+
+		this.mod = this.mod.bind(this)
+		this.floatToGrayscale = this.floatToGrayscale.bind(this)
+		this.floatToHSL = this.floatToHSL.bind(this);
+
+		this.refresh = this.refresh.bind(this);
+
+		this.setup = this.setup.bind(this);
+		this.drawChart = this.drawChart.bind(this)
+
+		this.flipItem = this.flipItem.bind(this);
+
+		this.setup();
+
+		this.refresh();
+
+	}
+
+
+	setup(){
 		let data = [];
 
 		this.edgeLength = this.props.edgeLength;
@@ -21,9 +52,7 @@ class Visualization extends React.Component {
 				'state': 0, 'color': ''})
 		}
 
-		this.state = {'data': data,
-				'interval': null
-			};
+		this.setState({'data': data});
 
 		this.margin = {'top': this.edgeLength*.1, 'bottom': this.edgeLength*.1, 'left': this.edgeLength*.1, 'right': this.edgeLength*.1}
 
@@ -39,18 +68,8 @@ class Visualization extends React.Component {
 		this.squareLength = this.size / this.edgeLength
 
 
-		this.updateVis = this.updateVis.bind(this);
+		return data;
 
-		this.computeNextState = this.computeNextState.bind(this);
-
-		this.computeVal = this.computeVal.bind(this)
-		this.computeNeighbors = this.computeNeighbors.bind(this);
-
-		this.mod = this.mod.bind(this)
-		this.floatToGrayscale = this.floatToGrayscale.bind(this)
-		this.floatToHSL = this.floatToHSL.bind(this);
-
-		this.refresh = this.refresh.bind(this);
 	}
 
 	updateVis(){	
@@ -196,62 +215,8 @@ class Visualization extends React.Component {
 		})
 	}
 
-
-	componentDidMount(){
-		this.svg = d3.select("#" + this.props.id)
-			.attr("width", this.size + this.margin.left + this.margin.right)
-			.attr("height", this.size + this.margin.top + this.margin.bottom)
-
-		this.viscontainer = this.svg.append("g");
-		// console.log(this.viscontainer);
-		// console.log(this.state.data)
-
-		let outerthis = this;
-
-
-
-		//background color
-		this.viscontainer
-			.append('g')
-			.selectAll(".background-rect")
-			.data(this.state.data)
-			.enter()
-			.append("rect")
-			.attr("class", 'background-rect')
-			.attr("fill", (d,i) => {return 'white'})
-			.attr("stroke-width", 2)
-			.attr("stroke", "black")
-			.attr("x", (d,i) => this.xScale(d.x))
-			.attr("y", (d,i) => this.yScale(d.y))
-			.attr("rx", (d,i) => this.squareLength*.2)
-			.attr("ry", (d,i) => this.squareLength*.2)
-			.attr("width", this.squareLength)
-			.attr("height", this.squareLength)
-
-
-
-		this.viscontainer
-			.selectAll(".main-rect")
-			.data(this.state.data)
-			.enter()
-			.append("rect")
-			.attr("class", 'main-rect')
-			.attr("id", (d,i) => d.index)
-			// .attr("fill", (d,i) => {return d.state ? "black" : "white"})
-			.attr("fill", (d,i) => {return d.color === '' ? 'white' : d.color;})
-			.attr("stroke-width", 2)
-			.attr("stroke", "black")
-			.attr("x", (d,i) => this.xScale(d.x))
-			.attr("y", (d,i) => this.yScale(d.y))
-			.attr("rx", (d,i) => this.squareLength*.2)
-			.attr("ry", (d,i) => this.squareLength*.2)
-			.attr("width", this.squareLength)
-			.attr("height", this.squareLength)
-
-			.on("click", (e,d) =>{
-				// console.log(e)
-				// console.log(d)
-				outerthis.setState((prevState) => {
+	flipItem(d){
+		this.setState((prevState) => {
 
 
 					let newState = prevState.data.map((item, index) => {
@@ -276,10 +241,104 @@ class Visualization extends React.Component {
 
 					return {data: newState};
 				})
-				outerthis.updateVis();
+		this.updateVis();
+	}
+
+
+	drawChart(){
+
+		//get data right away so we dont have to worry about async issues
+
+		this.data = this.setup();
+		console.log(this.edgeLength)
+		console.log("hi")
+		this.svg = d3.select("#" + this.props.id)
+			.attr("width", this.size + this.margin.left + this.margin.right)
+			.attr("height", this.size + this.margin.top + this.margin.bottom)
+
+
+		// console.log(this.svg.select('g').remove());
+
+		this.svg.selectAll('g').remove()
+		this.svg.selectAll('rect').remove()
+
+		this.viscontainer = this.svg.append("g");
+		// console.log(this.viscontainer);
+		// console.log(this.state.data)
+
+		let outerthis = this;
+
+		console.log(this.state.data.length)
+
+		//background color
+		this.viscontainer
+			.append('g')
+			.selectAll(".background-rect")
+			.data(this.data)
+			.enter()
+			.append("rect")
+			.attr("class", 'background-rect')
+			.attr("fill", (d,i) => {return 'white'})
+			.attr("stroke-width", 2)
+			.attr("stroke", "black")
+			.attr("x", (d,i) => this.xScale(d.x))
+			.attr("y", (d,i) => this.yScale(d.y))
+			.attr("rx", (d,i) => this.squareLength*.2)
+			.attr("ry", (d,i) => this.squareLength*.2)
+			.attr("width", this.squareLength)
+			.attr("height", this.squareLength)
+
+
+
+		this.viscontainer
+			.append('g')
+			.selectAll(".main-rect")
+			.data(this.data)
+			.enter()
+			.append("rect")
+			.attr("class", 'main-rect')
+			.attr("id", (d,i) => d.index)
+			// .attr("fill", (d,i) => {return d.state ? "black" : "white"})
+			.attr("fill", (d,i) => {return d.color === '' ? 'white' : d.color;})
+			.attr("stroke-width", 2)
+			.attr("stroke", "black")
+			.attr("x", (d,i) => this.xScale(d.x))
+			.attr("y", (d,i) => this.yScale(d.y))
+			.attr("rx", (d,i) => this.squareLength*.2)
+			.attr("ry", (d,i) => this.squareLength*.2)
+			.attr("width", this.squareLength)
+			.attr("height", this.squareLength)
+
+			.on("mousedown", (e,d) =>{
+				// console.log(e)
+				// console.log(d)
+				outerthis.isDown = true;
+
+				outerthis.flipItem(d);
+				
+			})
+			.on("mouseup", (e,d) => {
+				outerthis.isDown = false;
+			})
+			.on("mouseover", (e,d)=> {
+				if(outerthis.isDown){
+					outerthis.flipItem(d);
+				}
+			})
+
+
+		//avoids when you click down on vis but move mouse out
+		d3.select('body')
+			.on("mouseup", (e,d) => {
+				outerthis.isDown = false;
 			})
 		
-		this.refresh();
+		// this.refresh();
+	}
+
+
+	componentDidMount(){
+		this.drawChart();
 
 	}
 
@@ -297,6 +356,12 @@ class Visualization extends React.Component {
 
 
 	componentDidUpdate(prevProps){
+
+
+		if(this.props.edgeLength !== prevProps.edgeLength){
+			console.log("lol")
+			this.drawChart();
+		}
 		// if(this.props.play !== prevProps.play){
 		// 	if(this.props.play){
 		// 		this.refresh()
@@ -323,7 +388,7 @@ class Visualization extends React.Component {
 
 	render(){
 		return (
-			<svg id={this.props.id}>
+			<svg id={this.props.id} key={this.props.edgeLength}>
 			</svg>
 		);
 	}
