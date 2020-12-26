@@ -359,7 +359,6 @@ class Visualization extends React.Component {
 
 
 		if(this.props.edgeLength !== prevProps.edgeLength){
-			console.log("lol")
 			this.drawChart();
 		}
 		// if(this.props.play !== prevProps.play){

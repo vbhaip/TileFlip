@@ -14,7 +14,14 @@ import "ace-builds/src-noconflict/theme-monokai";
 
 import "ace-builds/webpack-resolver";
 
+import {
+  BrowserRouter as Router,
+  Switch,
+  Route,
+  Link
+} from "react-router-dom";
 
+import qs from 'qs'
 
 class App extends React.Component {
 
@@ -23,15 +30,7 @@ class App extends React.Component {
     this.handleRuleChange = this.handleRuleChange.bind(this)
     this.handleRuleChangeAce = this.handleRuleChangeAce.bind(this);
 
-    this.state = {
-      'rule': new Function('n', `return ''`),
-      'edgeLength': 10,
-      'play': false,
-      'editor_val': `function rule(ctx){
-
-        }`,
-      'refreshRate': 1000
-      }
+    
 
     this.updateResolution = this.updateResolution.bind(this);
     this.handlePlayChange = this.handlePlayChange.bind(this);
@@ -39,6 +38,36 @@ class App extends React.Component {
     this.temp = this.temp.bind(this);
 
     this.updateRefresh = this.updateRefresh.bind(this);
+
+    this.rawquery = window.location.search.slice(1)
+
+    this.query = qs.parse(this.rawquery);
+
+
+    //defaults
+    this.refreshRate = 1000;
+    this.edgeLength = 10
+
+    if('refreshRate' in this.query){
+      this.refreshRate = parseInt(this.query['refreshRate'])
+    }
+    if('resolution' in this.query){
+      this.edgeLength = parseInt(this.query['resolution'])
+    }
+
+
+    this.state = {
+      'rule': new Function('n', `return ''`),
+      'edgeLength': this.edgeLength,
+      'play': false,
+      'editor_val': `function rule(ctx){
+
+        }`,
+      'refreshRate': this.refreshRate
+      }
+
+
+
 
   }
 
@@ -133,7 +162,7 @@ class App extends React.Component {
            <br/>
 
            <Slider
-            defaultValue={1000}
+            defaultValue={this.refreshRate}
             valueLabelDisplay="auto"
             step={100}
             marks
@@ -148,7 +177,7 @@ class App extends React.Component {
            <br/>
 
           <Slider
-            defaultValue={10}
+            defaultValue={this.edgeLength}
             valueLabelDisplay="auto"
             step={1}
             marks
