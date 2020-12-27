@@ -35,6 +35,8 @@ class App extends React.Component {
     this.handlePlayChange = this.handlePlayChange.bind(this);
     this.setExportInitData = this.setExportInitData.bind(this);
     this.shareURL = this.shareURL.bind(this);
+    this.setGifURL = this.setGifURL.bind(this);
+    // this.downloadGif = this.downloadGif.bind(this);
 
 
     // this.temp = this.temp.bind(this);
@@ -91,7 +93,8 @@ class App extends React.Component {
     'play': this.play,
     'editor_val': this.editor_val,
     'refreshRate': this.refreshRate,
-    'exportInitData': ''
+    'exportInitData': '',
+    'gifURL': ''
     }
 
     // console.log(this.initdata)
@@ -99,6 +102,8 @@ class App extends React.Component {
     // if(this.initdata.length === this.edgeLength){
     this.state.initdata = this.initdata;
     // }
+
+
 
 
   }
@@ -140,6 +145,11 @@ class App extends React.Component {
     }
     catch(error){
       console.log(error)
+    }
+
+
+    if(this.state){
+      return new Function('x', 'return null;')
     }
 
     //return whatever is existing as a rule 
@@ -224,10 +234,15 @@ class App extends React.Component {
 
   }
 
+  setGifURL(item){
+    this.setState({'gifURL': item})
+  }
+
   // temp(e){
   //   document.getElementsByClassName("ace_text-input")[0]
   //     .innerHTML = "hi"
   // }
+
 
   render(){
     return (
@@ -236,7 +251,7 @@ class App extends React.Component {
         <div id='vis-container'>
           <Visualization id="viz" edgeLength={this.state.edgeLength} size={window.innerWidth*.25} rule={this.state.rule}
            play={this.state.play} refreshRate={this.state.refreshRate} initdata={this.initdata}
-           setExportInitData={this.setExportInitData}/>
+           setExportInitData={this.setExportInitData} setGifURL={this.setGifURL}/>
 
            <br/>
            Refresh Rate (ms)
@@ -305,6 +320,12 @@ class App extends React.Component {
           <br/>
           <Button variant="contained" color="primary" onClick={this.shareURL}>
               Share Creation
+            </Button>
+
+          <br/>
+          <br/>
+          <Button variant="contained" color="primary" href={this.state.gifURL} disabled={this.state.gifURL === ''}>
+              {this.state.gifURL !== '' ? "Export to GIF" : "GIF not ready"}
             </Button>
 
           </div>

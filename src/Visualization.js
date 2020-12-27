@@ -411,21 +411,35 @@ class Visualization extends React.Component {
 
 			this.props.setExportInitData(JSON.stringify(toExport))
 
+			this.gif = new GIF({
+			    workers: 3,
+			    quality: 1,
+			    repeat: 0,
+			    workerScript: process.env.PUBLIC_URL + "/gif.worker.js",
+			    debug: true
+			  });
+
+			this.props.setGifURL('');
+			
+			
+		}
+
+		if(this.props.play !== prevProps.play && !this.props.play){
 			if(this.gif.frames.length > 0 ){
 				let temp = this.gif.render();
 				console.log(temp)
 
+				let outerthis = this;
+
 				this.gif.on("finished",function(blob){
 
 				   
-				    console.log(URL.createObjectURL(blob));
+				    let gif_url = (URL.createObjectURL(blob));
 
-
+				    outerthis.props.setGifURL(gif_url)
 				  });
 			}
-			console.log(this.gif)
-			
-			
+			// console.log(this.gif)
 		}
 
 
