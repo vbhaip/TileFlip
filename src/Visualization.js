@@ -1,5 +1,7 @@
 import React from 'react'
 import * as d3 from 'd3'
+// import 'gif.js'
+import GIF from 'gif.js'
 
 class Visualization extends React.Component {
 
@@ -37,6 +39,18 @@ class Visualization extends React.Component {
 
 		this.setup();
 		this.refresh();
+
+
+		this.gif = new GIF({
+		    workers: 3,
+		    quality: 1,
+		    repeat: 0,
+		    workerScript: process.env.PUBLIC_URL + "/gif.worker.js",
+		    debug: true
+		  });
+
+
+		this.addGifItem = this.addGifItem.bind(this);
 
 		
 
@@ -367,6 +381,7 @@ class Visualization extends React.Component {
 	refresh(){
 
 		if(this.props.play && this.state.ready){
+			this.addGifItem();
 			this.computeNextState();
 			this.updateVis()
 		}
@@ -395,8 +410,25 @@ class Visualization extends React.Component {
 			}
 
 			this.props.setExportInitData(JSON.stringify(toExport))
+
+			if(this.gif.frames.length > 0 ){
+				let temp = this.gif.render();
+				console.log(temp)
+
+				this.gif.on("finished",function(blob){
+
+				   
+				    console.log(URL.createObjectURL(blob));
+
+
+				  });
+			}
+			console.log(this.gif)
+			
 			
 		}
+
+
 
 		// if(this.props.play !== prevProps.play){
 		// 	if(this.props.play){
@@ -418,6 +450,30 @@ class Visualization extends React.Component {
 
 		// 	// }
 		// }
+
+	}
+
+	addGifItem(){
+
+		//https://gist.github.com/veltman/1071413ad6b5b542a1a3
+
+		var img = new Image(),
+	    serialized = new XMLSerializer().serializeToString(this.svg.node()),
+	    svg = new Blob([serialized], {type: "image/svg+xml"}),
+	    url = URL.createObjectURL(svg);
+
+
+	    let outerthis = this;
+	    // Onload, callback to move on to next frame
+	    img.onload = function(){
+
+		      outerthis.gif.addFrame(img, {
+		        delay: outerthis.props.refreshRate,
+		        copy: true
+		      });
+		  }
+
+		img.src = url;
 
 	}
 
