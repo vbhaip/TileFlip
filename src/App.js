@@ -23,19 +23,21 @@ import {
 
 import qs from 'qs'
 
+import base64url from 'base64url'
+
 class App extends React.Component {
 
   constructor(props){
     super(props)
     this.handleRuleChange = this.handleRuleChange.bind(this)
     this.handleRuleChangeAce = this.handleRuleChangeAce.bind(this);
-
-    
-
     this.updateResolution = this.updateResolution.bind(this);
     this.handlePlayChange = this.handlePlayChange.bind(this);
+    this.setExportInitData = this.setExportInitData.bind(this);
+    this.shareURL = this.shareURL.bind(this);
 
-    this.temp = this.temp.bind(this);
+
+    // this.temp = this.temp.bind(this);
 
     this.updateRefresh = this.updateRefresh.bind(this);
 
@@ -46,7 +48,13 @@ class App extends React.Component {
 
     //defaults
     this.refreshRate = 1000;
-    this.edgeLength = 10
+    this.edgeLength = 10;
+    this.editor_val = `function rule(ctx){
+
+        }`;
+    this.play = false;
+    this.initdata = [];
+    
 
     if('refreshRate' in this.query){
       this.refreshRate = parseInt(this.query['refreshRate'])
@@ -54,21 +62,51 @@ class App extends React.Component {
     if('resolution' in this.query){
       this.edgeLength = parseInt(this.query['resolution'])
     }
+    if('code' in this.query){
+      this.editor_val = base64url.decode(this.query['code'])
+    }
+    if('play' in this.query && this.query['play'] === 'true'){
+      this.play = true;
+    }
+    if('state' in this.query){
+      try{
+        this.initdata = JSON.parse(this.query['state'])
+      }
+      catch(e){
+        console.log(e);
+      }
+
+    }
+
+
+    this.initrule = this.getFunctionFromString(this.editor_val)
+
+    console.log(this.initdata)
+  
 
 
     this.state = {
-      'rule': new Function('n', `return ''`),
-      'edgeLength': this.edgeLength,
-      'play': false,
-      'editor_val': `function rule(ctx){
+    'rule': this.initrule,
+    'edgeLength': this.edgeLength,
+    'play': this.play,
+    'editor_val': this.editor_val,
+    'refreshRate': this.refreshRate,
+    'exportInitData': ''
+    }
 
-        }`,
-      'refreshRate': this.refreshRate
-      }
+    // console.log(this.initdata)
+
+    // if(this.initdata.length === this.edgeLength){
+    this.state.initdata = this.initdata;
+    // }
 
 
+  }
 
-
+  setExportInitData(val){
+    this.setState({
+      'exportInitData': val
+    })
   }
 
   updateRefresh(e, val){
@@ -76,6 +114,38 @@ class App extends React.Component {
     this.setState({
       'refreshRate': val
     });
+  }
+
+  getFunctionFromString(val){
+
+    try{
+
+      let f = new Function('x', `
+        try{
+          // ${val.replace(/\n/g, "")};
+          let f = ${val}
+
+          return f(x);
+        }
+        catch(error){
+          return error;
+        }
+        `)
+      // let f = null;
+
+      return f;
+      // this.setState({'rule': f});
+
+      console.log(f)
+    }
+    catch(error){
+      console.log(error)
+    }
+
+    //return whatever is existing as a rule 
+
+    return this.state.rule;
+
   }
 
   handleRuleChange(e) {
@@ -106,27 +176,16 @@ class App extends React.Component {
 
   handleRuleChangeAce(val) {
     this.setState({'editor_val': val})
-    val = val.slice(val.indexOf('{') + 1, val.indexOf('}')).trim();
+    // val = val.slice(val.indexOf('{') + 1, val.indexOf('}')).trim();
     console.log(val)
-    try{
 
-      let f = new Function('ctx', `
-        try{
-          ${val.replace(/\n/g, "")};
-        }
-        catch(error){
-          return error;
-        }
-        `)
-      // let f = null;
+    console.log(base64url.encode(val))
 
-      this.setState({'rule': f});
+    let f = this.getFunctionFromString(val);
+    
+    this.setState({'rule': f});
 
-      console.log(f)
-    }
-    catch(error){
-      console.log(error)
-    }
+
 
   }
 
@@ -144,10 +203,31 @@ class App extends React.Component {
     });
   }
 
-  temp(e){
-    document.getElementsByClassName("ace_text-input")[0]
-      .innerHTML = "hi"
+  shareURL(){
+    let params = {};
+
+    params['refreshRate'] = this.state.refreshRate;
+    params['play'] = true
+    params['resolution'] = this.state.edgeLength
+    params['code'] = base64url.encode(this.state.editor_val)
+    params['state'] = this.state.exportInitData;
+
+    let export_qs = qs.stringify(params);
+
+    let curr_url = window.location.toString();
+
+    let new_url = curr_url.slice(curr_url.lastIndexOf('/')+1) + '?' + export_qs;
+
+    window.history.pushState('', '', new_url);
+
+    window.prompt("Copy to share (Ctrl+C, Enter)",curr_url + new_url)
+
   }
+
+  // temp(e){
+  //   document.getElementsByClassName("ace_text-input")[0]
+  //     .innerHTML = "hi"
+  // }
 
   render(){
     return (
@@ -155,7 +235,8 @@ class App extends React.Component {
 
         <div id='vis-container'>
           <Visualization id="viz" edgeLength={this.state.edgeLength} size={window.innerWidth*.25} rule={this.state.rule}
-           play={this.state.play} refreshRate={this.state.refreshRate}/>
+           play={this.state.play} refreshRate={this.state.refreshRate} initdata={this.initdata}
+           setExportInitData={this.setExportInitData}/>
 
            <br/>
            Refresh Rate (ms)
@@ -198,7 +279,7 @@ class App extends React.Component {
             mode="javascript"
             theme="monokai"
             name="editor"
-            onLoad={this.temp}
+            // onLoad={this.handleRuleChangeAce}
             onChange={this.handleRuleChangeAce}
             fontSize={14}
             showPrintMargin={true}
@@ -218,6 +299,12 @@ class App extends React.Component {
                       
           <Button variant="contained" color="primary" onClick={this.handlePlayChange}>
               {this.state.play ? "Pause" : "Play"}
+            </Button>
+
+          <br/>
+          <br/>
+          <Button variant="contained" color="primary" onClick={this.shareURL}>
+              Share Creation
             </Button>
 
           </div>

@@ -12,7 +12,8 @@ class Visualization extends React.Component {
 		super(props);
 
 		this.state = {'data': [],
-				'interval': null
+				'interval': null,
+				'ready': false
 			};
 		
 
@@ -35,8 +36,9 @@ class Visualization extends React.Component {
 		this.flipItem = this.flipItem.bind(this);
 
 		this.setup();
-
 		this.refresh();
+
+		
 
 	}
 
@@ -67,6 +69,18 @@ class Visualization extends React.Component {
 
 		this.squareLength = this.size / this.edgeLength
 
+
+		//adjust vals for init data
+		console.log(this.props.initdata)
+		Object.entries(this.props.initdata).forEach(([key, val]) => {
+			try{
+				console.log(parseFloat(val))
+				data[parseInt(key)].state = parseFloat(val);
+			}
+			catch(e){
+				console.log(e)
+			}
+		})
 
 		return data;
 
@@ -147,6 +161,10 @@ class Visualization extends React.Component {
 	computeNextState(){
 		this.setState((prevState) => {
 			let newState = prevState.data.map((item, index) => {
+
+				let tempitem = {...item}
+
+
 				let neighbors = this.computeNeighbors(index);
 				neighbors.upleft = neighbors[0]
 				neighbors.up = neighbors[1]
@@ -167,14 +185,15 @@ class Visualization extends React.Component {
 
 				let ctx = neighbors;
 
-				ctx.index = index
-				ctx.x = item.x
-				ctx.y = item.y
+				ctx.index = index;
+				ctx.x = item.x;
+				ctx.y = item.y;
+				ctx.color = tempitem.color;
 
 
 				// return this.props.rule(n)
 
-				let tempitem = {...item}
+				
 
 				// tempitem.state = this.props.rule(n)
 				// console.log(this.props.rule(n))
@@ -183,7 +202,7 @@ class Visualization extends React.Component {
 
 				// console.log(ctx)
 
-				if(typeof value === 'number'){
+				if(typeof value === 'number' && !isNaN(value)){
 					tempitem.state = value;
 				}
 
@@ -299,7 +318,8 @@ class Visualization extends React.Component {
 			.attr("class", 'main-rect')
 			.attr("id", (d,i) => d.index)
 			// .attr("fill", (d,i) => {return d.state ? "black" : "white"})
-			.attr("fill", (d,i) => {return d.color === '' ? 'white' : d.color;})
+			.attr("fill", (d,i) => {return d.color === '' ? 'black' : d.color;})
+			.attr("fill-opacity", (d,i) => {return d.state})
 			.attr("stroke-width", 2)
 			.attr("stroke", "black")
 			.attr("x", (d,i) => this.xScale(d.x))
@@ -334,17 +354,19 @@ class Visualization extends React.Component {
 			})
 		
 		// this.refresh();
+		this.setState({'ready': true})
 	}
 
 
 	componentDidMount(){
 		this.drawChart();
 
+
 	}
 
 	refresh(){
 
-		if(this.props.play){
+		if(this.props.play && this.state.ready){
 			this.computeNextState();
 			this.updateVis()
 		}
@@ -361,6 +383,21 @@ class Visualization extends React.Component {
 		if(this.props.edgeLength !== prevProps.edgeLength){
 			this.drawChart();
 		}
+
+		if(this.props.play !== prevProps.play && this.props.play){
+			//we just switched the button on
+			console.log(this.state.data)
+			let toExport = {};
+			for(let i = 0; i < this.state.data.length; i++){
+				if(this.state.data[i].state !== 0){
+					toExport[i] = this.state.data[i].state; 
+				}
+			}
+
+			this.props.setExportInitData(JSON.stringify(toExport))
+			
+		}
+
 		// if(this.props.play !== prevProps.play){
 		// 	if(this.props.play){
 		// 		this.refresh()
