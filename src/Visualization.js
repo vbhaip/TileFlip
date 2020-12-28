@@ -208,6 +208,8 @@ class Visualization extends React.Component {
 				ctx.color = tempitem.color;
 
 				ctx.float_to_color = this.floatToHSL
+
+				ctx.resolution = this.props.edgeLength
 				// console.log(this.floatToHSL)
 
 				// return this.props.rule(n)
@@ -491,7 +493,6 @@ class Visualization extends React.Component {
 	addGifItem(){
 
 		//https://gist.github.com/veltman/1071413ad6b5b542a1a3
-		console.log("why is my code here")
 		var img = new Image(),
 	    serialized = new XMLSerializer().serializeToString(this.svg.node()),
 	    svg = new Blob([serialized], {type: "image/svg+xml"}),

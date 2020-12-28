@@ -36,16 +36,39 @@ class App extends React.Component {
     this.setExportInitData = this.setExportInitData.bind(this);
     this.shareURL = this.shareURL.bind(this);
     this.setGifURL = this.setGifURL.bind(this);
+    this.updateRefresh = this.updateRefresh.bind(this);
+    this.setStateFromQuery = this.setStateFromQuery.bind(this);
+    this.progressExample = this.progressExample.bind(this);
+
     // this.downloadGif = this.downloadGif.bind(this);
 
 
     // this.temp = this.temp.bind(this);
 
-    this.updateRefresh = this.updateRefresh.bind(this);
-
     this.rawquery = window.location.search.slice(1)
 
     this.query = qs.parse(this.rawquery);
+
+
+    fetch(process.env.PUBLIC_URL + '/examples.txt')
+      .then(response => response.text())
+      .then((text) => {
+        this.examples = text.split("\n\n")
+        console.log(this.examples);
+        this.curr_example = 0;
+
+        // no parameters means load example
+        if(Object.keys(this.query).length === 0){
+          let query = qs.parse(this.examples[this.curr_example]);
+          this.setStateFromQuery(query);
+        }
+
+        this.setState({'curr_example': 0, 'examples': this.examples})
+
+      })
+
+
+    
 
 
     //defaults
@@ -83,9 +106,6 @@ class App extends React.Component {
 
     this.initrule = this.getFunctionFromString(this.editor_val)
 
-    console.log(this.initdata)
-  
-
 
     this.state = {
     'rule': this.initrule,
@@ -104,9 +124,46 @@ class App extends React.Component {
     // }
 
 
+  }
+
+  setStateFromQuery(query){
+
+    if('refreshRate' in query){
+      this.setState({'refreshRate': parseInt(query['refreshRate'])})
+    }
+    if('resolution' in query){
+      this.setState({'edgeLength': parseInt(query['resolution'])})
+    }
+    if('code' in query){
+      let editor_val = base64url.decode(query['code']);
+      this.setState({'editor_val' : editor_val});
+      this.setState({'rule': this.getFunctionFromString(editor_val)})
+    }
+    if('play' in query && query['play'] === 'true'){
+      this.setState({'play': true})
+    }
+    if('state' in query){
+      try{
+        this.setState({'initdata': JSON.parse(query['state'])});
+      }
+      catch(e){
+        console.log(e);
+      }
+
+    }
 
 
   }
+
+  progressExample(){
+    this.setState((prevState) => {
+      let new_example_ind = (prevState.curr_example + 1) % prevState.examples.length;
+      this.setStateFromQuery(qs.parse(prevState.examples[new_example_ind]));
+      return {'curr_example': new_example_ind}
+    });
+
+  }
+
 
   setExportInitData(val){
     this.setState({
@@ -286,6 +343,30 @@ class App extends React.Component {
             max={15}
             onChange={this.updateResolution}
             style={{"width": "50%"}}/>
+
+
+          <br/>
+          <br/>
+
+            <Button variant="contained" color="primary" onClick={this.handlePlayChange}>
+              {this.state.play ? "Pause" : "Play"}
+            </Button>
+
+          <br/>
+          <br/>
+          <Button variant="contained" color="primary" onClick={this.shareURL}>
+              Share Creation
+            </Button>
+
+          <br/>
+          <br/>
+          
+          <a href={this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
+            <Button variant="contained" color="primary" download={this.state.gifURL} disabled={this.state.gifURL === ''}
+            target="_blank">
+                {this.state.gifURL !== '' ? "Download as GIF" : "GIF not ready"}
+              </Button>
+          </a>
                 
 
         </div>
@@ -316,26 +397,12 @@ class App extends React.Component {
             }}
 
             />
+
+            <Button variant="contained" color="primary" onClick={this.progressExample}>
+              Next Example
+            </Button>
                       
-          <Button variant="contained" color="primary" onClick={this.handlePlayChange}>
-              {this.state.play ? "Pause" : "Play"}
-            </Button>
-
-          <br/>
-          <br/>
-          <Button variant="contained" color="primary" onClick={this.shareURL}>
-              Share Creation
-            </Button>
-
-          <br/>
-          <br/>
           
-          <a href={this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
-            <Button variant="contained" color="primary" download={this.state.gifURL} disabled={this.state.gifURL === ''}
-            target="_blank">
-                {this.state.gifURL !== '' ? "Download as GIF" : "GIF not ready"}
-              </Button>
-          </a>
 
           </div>
       </div>
