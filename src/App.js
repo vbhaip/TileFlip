@@ -54,6 +54,10 @@ class App extends React.Component {
       .then(response => response.text())
       .then((text) => {
         this.examples = text.split("\n\n")
+
+        //get rid of label at the beginning
+        this.examples.map((item) => item.slice(item.indexOf(":")+1))
+
         console.log(this.examples);
         this.curr_example = 0;
 

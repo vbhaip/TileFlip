@@ -16,7 +16,8 @@ class Visualization extends React.Component {
 		this.state = {'data': [],
 				'interval': null,
 				'ready': false,
-				'existingBlobs': []
+				'existingBlobs': [],
+				'time': 0
 			};
 		
 
@@ -66,7 +67,7 @@ class Visualization extends React.Component {
 
 		for(let i = 0; i < this.edgeLength**2; i++){
 			data.push({'index': i, 'x': i%this.edgeLength, 'y': Math.floor(i/this.edgeLength), 
-				'state': 0, 'color': ''})
+				'state': 0, 'color': '', 'animate': false})
 		}
 
 		this.setState({'data': data});
@@ -102,17 +103,46 @@ class Visualization extends React.Component {
 	}
 
 	updateVis(){	
-		// console.log(this.state.data)
-
+		
+		//for elements that want to transition
 		this.viscontainer
 			.selectAll(".main-rect")
 			.data(this.state.data)
 			// .attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
+			.filter((d,i) => d.animate)
+			.transition()
+			.duration((d,i) => {
+				console.log(d.animate);
+				return this.props.refreshRate
+			})
+			.ease(d3.easePolyIn)
 			.attr("fill", (d,i) => {
 				return d.color === '' ? 'black' : d.color;
 			})
 			.attr("fill-opacity", (d,i) => {return d.state})
-			.transition(1000)
+
+		//for elements to just discretely turn on and off
+		this.viscontainer
+			.selectAll(".main-rect")
+			.data(this.state.data)
+			// .attr("fill", (d,i) => {return this.floatToGrayscale(d.state)})
+			.filter((d,i) => !d.animate)
+			.attr("fill", (d,i) => {
+				return d.color === '' ? 'black' : d.color;
+			})
+			.attr("fill-opacity", (d,i) => {return d.state})
+			
+	}
+
+	updateVisDiscreteFlip(){
+		this.viscontainer
+			.selectAll(".main-rect")
+			.data(this.state.data)
+			.attr("fill", (d,i) => {
+				return d.color === '' ? 'black' : d.color;
+			})
+			.attr("fill-opacity", (d,i) => {return d.state})
+
 	}
 
 	computeVal(index){
@@ -210,6 +240,8 @@ class Visualization extends React.Component {
 				ctx.float_to_color = this.floatToHSL
 
 				ctx.resolution = this.props.edgeLength
+
+				ctx.t = prevState.time;
 				// console.log(this.floatToHSL)
 
 				// return this.props.rule(n)
@@ -234,6 +266,10 @@ class Visualization extends React.Component {
 					tempitem.color = '';
 				}
 
+				if(ctx.animate === true){
+					tempitem.animate = true;
+				}
+
 
 
 				// //substitute rule here
@@ -250,7 +286,7 @@ class Visualization extends React.Component {
 
 			})
 
-			return {'data': newState};
+			return {'data': newState, 'time': prevState.time + 1};
 
 		})
 	}
@@ -281,7 +317,7 @@ class Visualization extends React.Component {
 
 					return {data: newState};
 				})
-		this.updateVis();
+		this.updateVisDiscreteFlip();
 	}
 
 
@@ -412,7 +448,7 @@ class Visualization extends React.Component {
 			let toExport = {};
 			for(let i = 0; i < this.state.data.length; i++){
 				if(this.state.data[i].state !== 0){
-					toExport[i] = this.state.data[i].state; 
+					toExport[i] = this.state.data[i].state.toFixed(2); 
 				}
 			}
 
@@ -433,7 +469,8 @@ class Visualization extends React.Component {
 			});
 
 			this.setState({
-				'existingBlobs': []
+				'existingBlobs': [],
+				'time': 0
 			})
 
 
@@ -491,6 +528,11 @@ class Visualization extends React.Component {
 	}
 
 	addGifItem(){
+
+		if(this.state.existingBlobs.length > 50){
+			//we dont want the gif to keep growing in size, so stop if it gets too big
+			return
+		}
 
 		//https://gist.github.com/veltman/1071413ad6b5b542a1a3
 		var img = new Image(),
