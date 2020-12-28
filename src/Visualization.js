@@ -15,7 +15,8 @@ class Visualization extends React.Component {
 
 		this.state = {'data': [],
 				'interval': null,
-				'ready': false
+				'ready': false,
+				'existingBlobs': []
 			};
 		
 
@@ -173,6 +174,7 @@ class Visualization extends React.Component {
 	}
 
 	computeNextState(){
+
 		this.setState((prevState) => {
 			let newState = prevState.data.map((item, index) => {
 
@@ -180,30 +182,33 @@ class Visualization extends React.Component {
 
 
 				let neighbors = this.computeNeighbors(index);
-				neighbors.upleft = neighbors[0]
-				neighbors.up = neighbors[1]
-				neighbors.upright = neighbors[2]
-				neighbors.right = neighbors[3]
-				neighbors.downright = neighbors[4]
-				neighbors.down = neighbors[5]
-				neighbors.downleft = neighbors[6]
-				neighbors.left = neighbors[7]
+
+				let ctx = {}
+
+				ctx.upleft = neighbors[0]
+				ctx.up = neighbors[1]
+				ctx.upright = neighbors[2]
+				ctx.right = neighbors[3]
+				ctx.downright = neighbors[4]
+				ctx.down = neighbors[5]
+				ctx.downleft = neighbors[6]
+				ctx.left = neighbors[7]
 
 				// console.log(neighbors)
 
-				neighbors.curr = item.state
-				neighbors.ones = neighbors.filter(x => x === 1).length
-				neighbors.zeroes = neighbors.filter(x => x === 0).length
-				neighbors.corners = neighbors.filter((x,i) => {return x === 1 && (i%2 === 0)}).length
-				neighbors.sides = neighbors.filter((x,i) => {return x === 1 && (i%2 === 1)}).length
-
-				let ctx = neighbors;
+				ctx.curr = item.state
+				ctx.ones = neighbors.filter(x => x === 1).length
+				ctx.zeroes = neighbors.filter(x => x === 0).length
+				ctx.corners = neighbors.filter((x,i) => {return x === 1 && (i%2 === 0)}).length
+				ctx.sides = neighbors.filter((x,i) => {return x === 1 && (i%2 === 1)}).length
 
 				ctx.index = index;
 				ctx.x = item.x;
 				ctx.y = item.y;
 				ctx.color = tempitem.color;
 
+				ctx.float_to_color = this.floatToHSL
+				// console.log(this.floatToHSL)
 
 				// return this.props.rule(n)
 
@@ -419,6 +424,18 @@ class Visualization extends React.Component {
 			    debug: true
 			  });
 
+			this.state.existingBlobs.map((item) => {
+				console.log("yo");
+				console.log(item)
+				URL.revokeObjectURL(item)
+			});
+
+			this.setState({
+				'existingBlobs': []
+			})
+
+
+
 			this.props.setGifURL('');
 			
 			
@@ -434,7 +451,11 @@ class Visualization extends React.Component {
 				this.gif.on("finished",function(blob){
 
 				   
-				    let gif_url = (URL.createObjectURL(blob));
+				    let gif_url = (URL.createObjectURL(blob, {type: "image/gif"}));
+
+				    outerthis.setState((prevState) => {
+				    	return {'existingBlobs': prevState.existingBlobs.concat(gif_url)}
+				    })
 
 				    outerthis.props.setGifURL(gif_url)
 				  });
@@ -470,11 +491,15 @@ class Visualization extends React.Component {
 	addGifItem(){
 
 		//https://gist.github.com/veltman/1071413ad6b5b542a1a3
-
+		console.log("why is my code here")
 		var img = new Image(),
 	    serialized = new XMLSerializer().serializeToString(this.svg.node()),
 	    svg = new Blob([serialized], {type: "image/svg+xml"}),
 	    url = URL.createObjectURL(svg);
+
+	    this.setState((prevState) => {
+	    	return {'existingBlobs': prevState.existingBlobs.concat(url)}
+	    })
 
 
 	    let outerthis = this;

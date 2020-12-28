@@ -201,7 +201,8 @@ class App extends React.Component {
 
   updateResolution(e, val){
     this.setState({
-      'edgeLength': val
+      'edgeLength': val,
+      'initdata': []
     })
   }
 
@@ -226,11 +227,15 @@ class App extends React.Component {
 
     let curr_url = window.location.toString();
 
-    let new_url = curr_url.slice(curr_url.lastIndexOf('/')+1) + '?' + export_qs;
+    curr_url = curr_url.slice(0, curr_url.lastIndexOf('/'))
+
+    let new_url = curr_url + '?' + export_qs;
+
+    console.log(new_url)
 
     window.history.pushState('', '', new_url);
 
-    window.prompt("Copy to share (Ctrl+C, Enter)",curr_url + new_url)
+    window.prompt("Copy to share (Ctrl+C, Enter)",new_url)
 
   }
 
@@ -250,7 +255,7 @@ class App extends React.Component {
 
         <div id='vis-container'>
           <Visualization id="viz" edgeLength={this.state.edgeLength} size={window.innerWidth*.25} rule={this.state.rule}
-           play={this.state.play} refreshRate={this.state.refreshRate} initdata={this.initdata}
+           play={this.state.play} refreshRate={this.state.refreshRate} initdata={this.state.initdata}
            setExportInitData={this.setExportInitData} setGifURL={this.setGifURL}/>
 
            <br/>
@@ -324,9 +329,13 @@ class App extends React.Component {
 
           <br/>
           <br/>
-          <Button variant="contained" color="primary" href={this.state.gifURL} disabled={this.state.gifURL === ''}>
-              {this.state.gifURL !== '' ? "Export to GIF" : "GIF not ready"}
-            </Button>
+          
+          <a href={this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
+            <Button variant="contained" color="primary" download={this.state.gifURL} disabled={this.state.gifURL === ''}
+            target="_blank">
+                {this.state.gifURL !== '' ? "Download as GIF" : "GIF not ready"}
+              </Button>
+          </a>
 
           </div>
       </div>
