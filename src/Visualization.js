@@ -200,7 +200,7 @@ class Visualization extends React.Component {
 	}
 
 	floatToHSL(val){
-		return "hsl(" + Math.round(360*val) + ", 100%, 50%)" 
+		return "hsl(" + Math.round(360*(val%1)) + ", 100%, 50%)" 
 	}
 
 	computeNextState(){

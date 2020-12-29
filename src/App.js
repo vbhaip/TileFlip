@@ -56,7 +56,7 @@ class App extends React.Component {
         this.examples = text.split("\n\n")
 
         //get rid of label at the beginning
-        this.examples.map((item) => item.slice(item.indexOf(":")+1))
+        this.examples = this.examples.map((item) => item.slice(item.indexOf(":")+1))
 
         console.log(this.examples);
         this.curr_example = 0;
@@ -131,6 +131,8 @@ class App extends React.Component {
   }
 
   setStateFromQuery(query){
+
+    console.log(query)
 
     if('refreshRate' in query){
       this.setState({'refreshRate': parseInt(query['refreshRate'])})
@@ -330,6 +332,7 @@ class App extends React.Component {
             marks
             min={200}
             max={2000}
+            value={this.state.refreshRate}
             style={{'width': '50%'}}
             onChange={this.updateRefresh}
            />
@@ -345,6 +348,7 @@ class App extends React.Component {
             marks
             min={4}
             max={15}
+            value={this.state.edgeLength}
             onChange={this.updateResolution}
             style={{"width": "50%"}}/>
 
