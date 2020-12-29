@@ -1,8 +1,10 @@
 import React from 'react'
 import App from './App'
+import MoreInfo from './MoreInfo'
 
 import {
   BrowserRouter,
+  HashRouter,
   Switch,
   Route,
   Link,
@@ -16,9 +18,16 @@ class Router extends React.Component {
 	render() {
 		return (
 
-			<BrowserRouter>
-			<App/>
-			</BrowserRouter>
+			<HashRouter>
+				<Switch>
+					<Route exact path="/">
+						<App/>
+					</Route>
+					<Route exact path="/help">
+						<MoreInfo/>
+					</Route>
+				</Switch>
+			</HashRouter>
 			)
 	}
 }

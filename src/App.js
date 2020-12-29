@@ -369,7 +369,7 @@ class App extends React.Component {
           <br/>
           <br/>
           
-          <a href={this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
+          <a target="_blank" href={this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
             <Button variant="contained" color="primary" download={this.state.gifURL} disabled={this.state.gifURL === ''}
             target="_blank">
                 {this.state.gifURL !== '' ? "Download as GIF" : "GIF not ready"}
@@ -408,6 +408,13 @@ class App extends React.Component {
 
             <Button variant="contained" color="primary" onClick={this.progressExample}>
               Next Example
+            </Button>
+
+            <br/>
+            <br/>
+            
+            <Button variant="contained" color="primary" href="#help">
+              Help/More Info
             </Button>
                       
           

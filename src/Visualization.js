@@ -224,6 +224,8 @@ class Visualization extends React.Component {
 				ctx.downleft = neighbors[6]
 				ctx.left = neighbors[7]
 
+				ctx.neighbors = neighbors
+
 				// console.log(neighbors)
 
 				ctx.curr = item.state
