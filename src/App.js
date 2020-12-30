@@ -41,6 +41,13 @@ class App extends React.Component {
 
     this.rawquery = window.location.search.slice(1)
 
+    if(this.rawquery === '' &&  window.location.hash.includes('?')){
+      this.rawquery = window.location.hash;
+      this.rawquery = this.rawquery.slice(this.rawquery.indexOf('?') + 1)
+    }
+
+    console.log(this.rawquery)
+
     this.query = qs.parse(this.rawquery);
 
 

@@ -13,22 +13,22 @@ function rule(ctx){
 ``ctx`` is a dictionary that gives some helpful information for coming up with rules:
 
 
-| item | description|
-|--|--|
-| `ctx.curr` | current tile's value |
-| `ctx.index` | unique index of tile |
-| `ctx.x, y` | x and y location |
-| `ctx.t` | current time step |
-| `ctx.resolution` | side length of visualization|
-| `ctx.up, left, right, down, upleft, upright,  downleft, downright` | value of the states of neighbors |
-| `ctx.neighbors` | same info as above as an array, starting at 0 representing upleft moving clockwise |
-| `ctx.ones` | # of neighbors where state = 1 |
-| `ctx.zeroes` | # of neighbors where state = 0 |
-| `ctx.corners` | # of corners of tile where state = 1 |
-| `ctx.sides` | # of sides of tile where state = 1 |
-| `ctx.color` | a flag you can set for changing the color |
-| `ctx.float_to_color(a)` | function to turn a float from 0 to 1 into a hsl value |
-| `ctx.animate` | boolean flag you can set for animating a tile (as opposed to just flipping states) |
+| item | description| type |
+|--|--| -- |
+| `ctx.curr` | current tile's value | *float*, 0 - 1 |
+| `ctx.index` | unique index of tile | *int*, 0 - # of tiles |
+| `ctx.x, y` | x and y location | *int*, 0 - # of tiles on each side |
+| `ctx.t` | current time step | *int*, 0 - ∞|
+| `ctx.resolution` | # tiles on each side | *int* |
+| `ctx.up, left, right, down, upleft, upright,  downleft, downright` | value of the states of neighbors | *float*, 0 - 1|
+| `ctx.neighbors` | same info as above as an array, starting at 0 representing upleft moving clockwise | *array*, 0 - 1|
+| `ctx.ones` | # of neighbors where state = 1 | *int*, 0 - 8|
+| `ctx.zeroes` | # of neighbors where state = 0 | *int*, 0 - 8|
+| `ctx.corners` | # of corners of tile where state = 1 | *int*, 0 - 4|
+| `ctx.sides` | # of sides of tile where state = 1 | *int*, 0 - 4|
+| `ctx.color` |flag you can set for changing the color | *str* |
+| `ctx.float_to_color(a)` | helper function to turn a float from 0 to 1 into a hsl value | *function*, arg: *float* 0 - 1 |
+| `ctx.animate` | flag you can set for animating a tile (as opposed to just flipping states) | *bool* |
 
 
 These are there just to get you started, but you can always code up more complicated values. If you're still confused about these values, try it out in the editor and experiment!

@@ -259,6 +259,10 @@ class Visualization extends React.Component {
 				if(typeof value === 'number' && !isNaN(value)){
 					tempitem.state = value;
 				}
+				else{
+					//this accounts if they directly set ctx.curr
+					tempitem.state = ctx.curr;
+				}
 
 				if(typeof value === 'boolean'){
 					tempitem.state = value ? 1 : 0;
