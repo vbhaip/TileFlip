@@ -25,7 +25,7 @@ class MoreInfo extends React.Component {
 			</ReactMarkdown>
 
 			<div style={{'textAlign': 'center'}}>
-			<Button variant="contained" color="primary" href="/">
+			<Button variant="contained" color="primary" href="#">
               Back
             </Button>
             </div>
