@@ -1,7 +1,8 @@
 # Rule Based Generator
 
 ## How it works
-This application allows you to code up a rule that applies to each tile over and over leading to a visualization of tiles. The rule you write is a function that takes in an object context and returns the darkness of the tile from 0 to 1.
+
+This generator allows you to code one rule that applies to each tile leading to a visualization of the tiles. The rule you write is a function that takes in an object context and returns the state of the tile from 0 to 1. For example
 
 ```
 function rule(ctx){
@@ -19,17 +20,20 @@ function rule(ctx){
 | `ctx.x, y` | x and y location |
 | `ctx.t` | current time step |
 | `ctx.resolution` | side length of visualization|
-| `ctx.up, left, right, down, upleft, upright,  downleft, downright` | value of the states in neighbors |
-| `ctx.neighbors` | array with information above, starting at 0 topleft clockwise |
+| `ctx.up, left, right, down, upleft, upright,  downleft, downright` | value of the states of neighbors |
+| `ctx.neighbors` | same info as above as an array, starting at 0 representing upleft moving clockwise |
 | `ctx.ones` | # of neighbors where state = 1 |
 | `ctx.zeroes` | # of neighbors where state = 0 |
 | `ctx.corners` | # of corners of tile where state = 1 |
 | `ctx.sides` | # of sides of tile where state = 1 |
-| `ctx.color` | a value you can set for changing the color |
-| `ctx.float_to_color(a)` | function to turn float from 0 to 1 into hsl value |
+| `ctx.color` | a flag you can set for changing the color |
+| `ctx.float_to_color(a)` | function to turn a float from 0 to 1 into a hsl value |
+| `ctx.animate` | boolean flag you can set for animating a tile (as opposed to just flipping states) |
 
 
 These are there just to get you started, but you can always code up more complicated values. If you're still confused about these values, try it out in the editor and experiment!
+
+You can also adjust the size of the visualization and refresh rate on the side, as well as draw on the visualization to set an initial state. The 'Download GIF' button turns the last session from which you played and stopped into a GIF. 
 
 ## About
 

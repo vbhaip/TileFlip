@@ -4,6 +4,8 @@ import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Slider from '@material-ui/core/Slider'
 import Visualization from './Visualization'
+import { withTheme } from '@material-ui/core/styles';
+import {isMobile} from 'react-device-detect';
 
 
 import AceEditor from "react-ace";
@@ -104,7 +106,6 @@ class App extends React.Component {
       catch(e){
         console.log(e);
       }
-
     }
 
 
@@ -127,6 +128,16 @@ class App extends React.Component {
     this.state.initdata = this.initdata;
     // }
 
+    if(isMobile){
+      this.viswidth = window.innerWidth*.65
+      this.editorwidth = window.innerWidth*0.7
+      this.fontSize = 10;
+    }
+    else{
+      this.viswidth = window.innerHeight*.4
+      this.editorwidth = window.innerWidth*0.4
+      this.fontSize = 14;
+    }
 
   }
 
@@ -148,7 +159,7 @@ class App extends React.Component {
     if('play' in query && query['play'] === 'true'){
       this.setState({'play': true})
     }
-    if('state' in query){
+    if('state' in query && query['state'].length > 0){
       try{
         this.setState({'initdata': JSON.parse(query['state'])});
       }
@@ -157,6 +168,16 @@ class App extends React.Component {
       }
 
     }
+    else{
+      //if no state is set
+      this.initdata = {};
+      for(let i = 0; i < this.edgeLength**2; i++){
+        this.initdata[i] = 0;
+      }
+      this.setState({'initdata': this.initdata});
+    }
+
+
 
 
   }
@@ -317,13 +338,17 @@ class App extends React.Component {
       <div className="App">
 
         <div id='vis-container'>
-          <Visualization id="viz" edgeLength={this.state.edgeLength} size={window.innerWidth*.25} rule={this.state.rule}
+          <Visualization id="viz" edgeLength={this.state.edgeLength} size={this.viswidth} rule={this.state.rule}
            play={this.state.play} refreshRate={this.state.refreshRate} initdata={this.state.initdata}
-           setExportInitData={this.setExportInitData} setGifURL={this.setGifURL}/>
+           setExportInitData={this.setExportInitData} setGifURL={this.setGifURL}
+           isMobile={isMobile}/>
 
-           <br/>
-           Refresh Rate (ms)
-           <br/>
+
+           <p style={{'color':this.props.theme.palette.lightText.main, 
+           'fontFamily': this.props.theme.typography.fontFamily}}>
+              Refresh Rate (ms)
+           </p>
+
 
            <Slider
             defaultValue={this.refreshRate}
@@ -337,9 +362,10 @@ class App extends React.Component {
             onChange={this.updateRefresh}
            />
           
-           <br/>
-           Resolution
-           <br/>
+           <p style={{'color':this.props.theme.palette.lightText.main, 
+           'fontFamily': this.props.theme.typography.fontFamily}}>
+              Resolution
+           </p>
 
           <Slider
             defaultValue={this.edgeLength}
@@ -363,13 +389,13 @@ class App extends React.Component {
           <br/>
           <br/>
           <Button variant="contained" color="primary" onClick={this.shareURL}>
-              Share Creation
+              Share URL
             </Button>
 
           <br/>
           <br/>
           
-          <a target="_blank" href={this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
+          <a target="_blank" href={this.state.gifURL === '' ? false : this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
             <Button variant="contained" color="primary" download={this.state.gifURL} disabled={this.state.gifURL === ''}
             target="_blank">
                 {this.state.gifURL !== '' ? "Download as GIF" : "GIF not ready"}
@@ -390,19 +416,22 @@ class App extends React.Component {
             name="editor"
             // onLoad={this.handleRuleChangeAce}
             onChange={this.handleRuleChangeAce}
-            fontSize={14}
+            fontSize={this.fontSize}
             showPrintMargin={true}
             showGutter={true}
             highlightActiveLine={true}
             value={this.state.editor_val}
-            height={window.innerWidth*.3}
+            height={window.innerHeight*.5}
             setOptions={{
             enableBasicAutocompletion: true,
             enableLiveAutocompletion: true,
             enableSnippets: false,
-            showLineNumbers: true,
+            showLineNumbers: !isMobile,
+            showGutter: !isMobile,
             tabSize: 2,
             }}
+
+            width={this.editorwidth + "px"}
 
             />
 
@@ -412,8 +441,8 @@ class App extends React.Component {
 
             <br/>
             <br/>
-            
-            <Button variant="contained" color="primary" href="#help">
+
+            <Button variant="contained" color="secondary" href="#help">
               Help/More Info
             </Button>
                       
@@ -426,4 +455,4 @@ class App extends React.Component {
 
 }
 
-export default App;
+export default withTheme(App);

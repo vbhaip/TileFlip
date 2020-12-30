@@ -90,7 +90,6 @@ class Visualization extends React.Component {
 		console.log(this.props.initdata)
 		Object.entries(this.props.initdata).forEach(([key, val]) => {
 			try{
-				console.log(parseFloat(val))
 				data[parseInt(key)].state = parseFloat(val);
 			}
 			catch(e){
@@ -112,7 +111,7 @@ class Visualization extends React.Component {
 			.filter((d,i) => d.animate)
 			.transition()
 			.duration((d,i) => {
-				console.log(d.animate);
+				// console.log(d.animate);
 				return this.props.refreshRate
 			})
 			.ease(d3.easePolyIn)
@@ -261,6 +260,10 @@ class Visualization extends React.Component {
 					tempitem.state = value;
 				}
 
+				if(typeof value === 'boolean'){
+					tempitem.state = value ? 1 : 0;
+				}
+
 				if(ctx.color !== ''){
 					tempitem.color = ctx.color;
 				}
@@ -270,6 +273,9 @@ class Visualization extends React.Component {
 
 				if(ctx.animate === true){
 					tempitem.animate = true;
+				}
+				else{
+					tempitem.animate = false;
 				}
 
 
@@ -328,8 +334,8 @@ class Visualization extends React.Component {
 		//get data right away so we dont have to worry about async issues
 
 		this.data = this.setup();
-		console.log(this.edgeLength)
-		console.log("hi")
+		// console.log(this.edgeLength)
+		// console.log("hi")
 		this.svg = d3.select("#" + this.props.id)
 			.attr("width", this.size + this.margin.left + this.margin.right)
 			.attr("height", this.size + this.margin.top + this.margin.bottom)
@@ -346,7 +352,7 @@ class Visualization extends React.Component {
 
 		let outerthis = this;
 
-		console.log(this.state.data.length)
+		// console.log(this.state.data.length)
 
 		//background color
 		this.viscontainer
@@ -388,6 +394,8 @@ class Visualization extends React.Component {
 			.attr("width", this.squareLength)
 			.attr("height", this.squareLength)
 
+		if(!this.props.isMobile){
+			this.viscontainer.selectAll(".main-rect")
 			.on("mousedown", (e,d) =>{
 				// console.log(e)
 				// console.log(d)
@@ -404,6 +412,36 @@ class Visualization extends React.Component {
 					outerthis.flipItem(d);
 				}
 			})
+		}
+		else{
+			this.viscontainer.selectAll(".main-rect")
+			.on("touchstart", (e,d) =>{
+				// console.log(e)
+				// console.log(d)
+				outerthis.isDown = true;
+
+				outerthis.flipItem(d);
+				
+			})
+			.on("touchend", (e,d) => {
+				outerthis.isDown = false;
+			})
+
+		//figure out how to do touchmove and still flip the other tiles
+			// .on("touchmove", (e,d)=> {
+			// 	console.log(e)
+			// 	if(outerthis.isDown){
+			// 		var evt = (typeof e.originalEvent === 'undefined') ? e : e.originalEvent;
+			// 		var touch = evt.touches[0] || evt.changedTouches[0];
+
+			// 		let item = document.elementFromPoint(touch.pageX, touch.pageY);
+			// 		console.log(item)
+			// 		outerthis.flipItem(item);
+			// 	}
+
+			// })
+
+		}
 
 
 		//avoids when you click down on vis but move mouse out
@@ -446,7 +484,7 @@ class Visualization extends React.Component {
 
 		if(this.props.play !== prevProps.play && this.props.play){
 			//we just switched the button on
-			console.log(this.state.data)
+			// console.log(this.state.data)
 			let toExport = {};
 			for(let i = 0; i < this.state.data.length; i++){
 				if(this.state.data[i].state !== 0){
@@ -465,8 +503,8 @@ class Visualization extends React.Component {
 			  });
 
 			this.state.existingBlobs.map((item) => {
-				console.log("yo");
-				console.log(item)
+				// console.log("yo");
+				// console.log(item)
 				URL.revokeObjectURL(item)
 			});
 
@@ -485,7 +523,7 @@ class Visualization extends React.Component {
 		if(this.props.play !== prevProps.play && !this.props.play){
 			if(this.gif.frames.length > 0 ){
 				let temp = this.gif.render();
-				console.log(temp)
+				// console.log(temp)
 
 				let outerthis = this;
 

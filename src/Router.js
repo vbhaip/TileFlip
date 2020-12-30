@@ -1,6 +1,10 @@
 import React from 'react'
 import App from './App'
 import MoreInfo from './MoreInfo'
+import { createMuiTheme } from '@material-ui/core/styles';
+import { ThemeProvider } from '@material-ui/core/styles';
+import { withTheme } from '@material-ui/core/styles';
+ 
 
 import {
   BrowserRouter,
@@ -10,6 +14,34 @@ import {
   Link,
   useLocation
 } from "react-router-dom";
+
+
+
+const theme = createMuiTheme({
+  palette: {
+    primary: {
+      main: '#9B6A6C',
+    },
+    secondary: {
+      main: '#6DC0D5',
+    },
+    error: {
+    	main: '#c1666b'
+    },
+    warning: {
+    	main: '#d4b843'
+    },
+    black: {
+    	main: '#020202'
+    },
+    lightText:  {
+    	main: '#F7F0F5'
+    }
+  },
+  typography: {
+  	fontFamily: "'Oswald'"
+  }
+});
 
 class Router extends React.Component {
 	constructor(props){
@@ -21,10 +53,14 @@ class Router extends React.Component {
 			<HashRouter>
 				<Switch>
 					<Route exact path="/">
-						<App/>
+						<ThemeProvider theme={theme}>
+							<App/>
+						</ThemeProvider>
 					</Route>
 					<Route exact path="/help">
-						<MoreInfo/>
+						<ThemeProvider theme={theme}>
+							<MoreInfo/>
+						</ThemeProvider>
 					</Route>
 				</Switch>
 			</HashRouter>
@@ -32,4 +68,4 @@ class Router extends React.Component {
 	}
 }
 
-export default Router;
+export default withTheme(Router);

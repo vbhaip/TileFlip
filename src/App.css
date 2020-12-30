@@ -63,3 +63,18 @@
     margin-bottom: 10vh;
 
 }
+
+
+@media (pointer:none), (pointer:coarse) {
+
+  #vis-container{
+    width: 100vw;
+    padding-bottom: 0;
+  }
+
+  #controls-container{
+    width: 100vw;
+    padding-top: 0;
+  }
+
+}

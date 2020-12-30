@@ -1,6 +1,4 @@
-turn all states on:refreshRate=1000&play=true&resolution=10&code=ZnVuY3Rpb24gcnVsZShjdHgpewovL3dyaXRlIGEgZnVuY3Rpb24gdG8gY29udHJvbCB0aGUgc3RhdGUKLy9hbmQgY2xpY2sgcGxheQovL2RyYXcgb3ZlciB0aGUgYm9hcmQgYW5kIGdvIHRvIHRoZSBuZXh0IGV4YW1wbGUKLy93aGVuIHJlYWR5CnJldHVybiAxOwp9&state=%7B%7D
-
-flip states on and off:refreshRate=1000&play=true&resolution=10&code=ZnVuY3Rpb24gcnVsZShjdHgpewovL3RoZSBjdHggb2JqZWN0IGNvbnRhaW5zIGluZm9ybWF0aW9uIG9uIAovL2VhY2ggdGlsZSdzIHN0YXRlCnJldHVybiAxIC0gY3R4LmN1cnI7CiAgICAgICAgfQ&state=
+flip states on and off:refreshRate=1000&play=true&resolution=10&code=ZnVuY3Rpb24gcnVsZShjdHgpewovL3dyaXRlIGEgZnVuY3Rpb24gdG8gY29udHJvbCB0aGUgc3RhdGUKCi8vdGhlIGN0eCBvYmplY3QgY29udGFpbnMgaW5mb3JtYXRpb24gb24gCi8vZWFjaCB0aWxlJ3Mgc3RhdGUKCi8vZHJhdyBvdmVyIHRoZSBib2FyZCBhbmQgZ28gdG8gdGhlIG5leHQgZXhhbXBsZQovL3doZW4gcmVhZHkKCnJldHVybiAxIC0gY3R4LmN1cnI7CiAgICAgICAgfQ&state=
 
 neighbor info, square upright:refreshRate=1000&play=true&resolution=7&code=ZnVuY3Rpb24gcnVsZShjdHgpewovL2N0eCBjb250YWlucyBpbmZvcm1hdGlvbiBvbiBuZWlnaGJvcnMKLy9hY2Nlc3NpYmxlIGJ5IGN0eC51cCwgbGVmdCwgcmlnaHQsIGRvd24KLy9hbmQgZGlhZ29uYWwgdmFsdWVzIHRvbwpyZXR1cm4gY3R4LnVwcmlnaHQ7CiAgICAgICAgfQ&state=%7B"8"%3A"1.00"%2C"9"%3A"1.00"%2C"10"%3A"1.00"%2C"11"%3A"1.00"%2C"12"%3A"1.00"%2C"15"%3A"1.00"%2C"19"%3A"1.00"%2C"22"%3A"1.00"%2C"26"%3A"1.00"%2C"29"%3A"1.00"%2C"33"%3A"1.00"%2C"36"%3A"1.00"%2C"37"%3A"1.00"%2C"38"%3A"1.00"%2C"39"%3A"1.00"%2C"40"%3A"1.00"%7D
 
