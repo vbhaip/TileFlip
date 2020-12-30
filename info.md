@@ -2,7 +2,7 @@
 
 ## How it works
 
-This generator allows you to code one rule that applies to each tile leading to a visualization of the tiles. The rule you write is a function that takes in an object context and returns the state of the tile from 0 to 1. For example
+This generator allows you to code one rule that applies to each tile leading to a visualization of the tiles. The rule you write is a function that takes in an object context and returns the state of the tile from 0 to 1. For example, to make all tiles grey, you write
 
 ```
 function rule(ctx){
