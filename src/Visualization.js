@@ -114,7 +114,7 @@ class Visualization extends React.Component {
 				// console.log(d.animate);
 				return this.props.refreshRate
 			})
-			.ease(d3.easePolyIn)
+			.ease(d3.easeLinear)
 			.attr("fill", (d,i) => {
 				return d.color === '' ? 'black' : d.color;
 			})
@@ -172,10 +172,10 @@ class Visualization extends React.Component {
 		let down = this.computeVal(this.mod((index + this.edgeLength),(this.edgeLength**2)));
 
 
-		let rawleft = index%this.edgeLength==0 ? index+this.edgeLength-1 : index - 1;
+		let rawleft = index%this.edgeLength===0 ? index+this.edgeLength-1 : index - 1;
 		let left = this.computeVal(rawleft);
 
-		let rawright = (index+1)%this.edgeLength==0 ? index-this.edgeLength+1 : index + 1;
+		let rawright = (index+1)%this.edgeLength===0 ? index-this.edgeLength+1 : index + 1;
 		let right = this.computeVal(rawright);
 
 
@@ -522,8 +522,8 @@ class Visualization extends React.Component {
 
 		if(this.props.play !== prevProps.play && !this.props.play){
 			if(this.gif.frames.length > 0 ){
-				let temp = this.gif.render();
-				// console.log(temp)
+				
+				this.gif.render();
 
 				let outerthis = this;
 

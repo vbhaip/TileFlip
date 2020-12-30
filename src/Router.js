@@ -7,12 +7,12 @@ import { withTheme } from '@material-ui/core/styles';
  
 
 import {
-  BrowserRouter,
+  // BrowserRouter,
   HashRouter,
   Switch,
   Route,
-  Link,
-  useLocation
+  // Link,
+  // useLocation
 } from "react-router-dom";
 
 
@@ -44,9 +44,7 @@ const theme = createMuiTheme({
 });
 
 class Router extends React.Component {
-	constructor(props){
-		super(props);
-	}
+
 	render() {
 		return (
 

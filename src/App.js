@@ -1,7 +1,6 @@
 import './App.css';
 import React from 'react'
 import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
 import Slider from '@material-ui/core/Slider'
 import Visualization from './Visualization'
 import { withTheme } from '@material-ui/core/styles';
@@ -15,13 +14,6 @@ import "ace-builds/src-noconflict/theme-monokai";
 // import "ace-builds/src-noconflict/ext-language_tools"
 
 import "ace-builds/webpack-resolver";
-
-import {
-  BrowserRouter as Router,
-  Switch,
-  Route,
-  Link
-} from "react-router-dom";
 
 import qs from 'qs'
 
@@ -225,7 +217,6 @@ class App extends React.Component {
       return f;
       // this.setState({'rule': f});
 
-      console.log(f)
     }
     catch(error){
       console.log(error)
