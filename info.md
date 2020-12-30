@@ -27,8 +27,9 @@ function rule(ctx){
 | `ctx.corners` | # of corners of tile where state = 1 | *int*, 0 - 4|
 | `ctx.sides` | # of sides of tile where state = 1 | *int*, 0 - 4|
 | `ctx.color` |flag you can set for changing the color | *str* |
-| `ctx.float_to_color(a)` | helper function to turn a float from 0 to 1 into a hsl value | *function*, arg: *float* 0 - 1 |
+| `ctx.float_to_color(a)` | helper function to turn a float from 0 to 1 into a hsl value | *function*, arg: *float* 0 - 1|
 | `ctx.animate` | flag you can set for animating a tile (as opposed to just flipping states) | *bool* |
+| `ctx.board` | raw states for all tiles | *array* 0 - # of tiles |
 
 
 These are there just to get you started, but you can always code up more complicated values. If you're still confused about these values, try it out in the editor and experiment!
