@@ -67,7 +67,7 @@ class Visualization extends React.Component {
 
 		for(let i = 0; i < this.edgeLength**2; i++){
 			data.push({'index': i, 'x': i%this.edgeLength, 'y': Math.floor(i/this.edgeLength), 
-				'state': 0, 'color': '', 'animate': false})
+				'state': 0, 'color': '', 'animate': false, 'invert': false})
 		}
 
 		this.setState({'data': data});
@@ -118,7 +118,7 @@ class Visualization extends React.Component {
 			.attr("fill", (d,i) => {
 				return d.color === '' ? 'black' : d.color;
 			})
-			.attr("fill-opacity", (d,i) => {return d.state})
+			.attr("fill-opacity", (d,i) => {return !d.invert ? d.state : 1 - d.state})
 
 		//for elements to just discretely turn on and off
 		this.viscontainer
@@ -129,7 +129,7 @@ class Visualization extends React.Component {
 			.attr("fill", (d,i) => {
 				return d.color === '' ? 'black' : d.color;
 			})
-			.attr("fill-opacity", (d,i) => {return d.state})
+			.attr("fill-opacity", (d,i) => {return !d.invert ? d.state : 1 - d.state})
 			
 	}
 
@@ -140,7 +140,7 @@ class Visualization extends React.Component {
 			.attr("fill", (d,i) => {
 				return d.color === '' ? 'black' : d.color;
 			})
-			.attr("fill-opacity", (d,i) => {return d.state})
+			.attr("fill-opacity", (d,i) => {return !d.invert ? d.state : 1 - d.state})
 
 	}
 
@@ -224,6 +224,7 @@ class Visualization extends React.Component {
 				ctx.left = neighbors[7]
 
 				ctx.neighbors = neighbors
+				ctx.board = prevState.data.map(x => x.state)
 
 				// console.log(neighbors)
 
@@ -280,6 +281,13 @@ class Visualization extends React.Component {
 				}
 				else{
 					tempitem.animate = false;
+				}
+
+				if(ctx.invert === true){
+					tempitem.invert = true;
+				}
+				else{
+					tempitem.invert = false;
 				}
 
 
@@ -341,8 +349,10 @@ class Visualization extends React.Component {
 		// console.log(this.edgeLength)
 		// console.log("hi")
 		this.svg = d3.select("#" + this.props.id)
-			.attr("width", this.size + this.margin.left + this.margin.right)
-			.attr("height", this.size + this.margin.top + this.margin.bottom)
+			.attr("width", this.size)
+			.attr("height", this.size)
+			// .attr("width", this.size + this.margin.left + this.margin.right)
+			// .attr("height", this.size + this.margin.top + this.margin.bottom)
 
 
 		// console.log(this.svg.select('g').remove());

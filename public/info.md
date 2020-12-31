@@ -27,13 +27,18 @@ function rule(ctx){
 | `ctx.corners` | # of corners of tile where state = 1 | *int*, 0 - 4|
 | `ctx.sides` | # of sides of tile where state = 1 | *int*, 0 - 4|
 | `ctx.color` |flag you can set for changing the color | *str* |
-| `ctx.float_to_color(a)` | helper function to turn a float from 0 to 1 into a hsl value | *function*, arg: *float* 0 - 1 |
+| `ctx.float_to_color(a)` | helper function to turn a float from 0 to 1 into a color [hsl value](https://en.wikipedia.org/wiki/HSL_and_HSV) | *function*, arg: *float* 0 - 1|
 | `ctx.animate` | flag you can set for animating a tile (as opposed to just flipping states) | *bool* |
+| `ctx.invert` | flag you can set for the rendering software to set the tile's value to `1 - ctx.curr` (advanced option for when you want a non-white background) | *bool* |
+| `ctx.board` | raw states for all tiles | *array*, 0 - # of tiles |
 
 
 These are there just to get you started, but you can always code up more complicated values. If you're still confused about these values, try it out in the editor and experiment!
 
-You can also adjust the size of the visualization and refresh rate on the side, as well as draw on the visualization to set an initial state. The 'Download GIF' button turns the last session from which you played and stopped into a GIF. 
+You can also adjust the size of the visualization and refresh rate on the side, as well as draw on the visualization to set an initial state. 
+
+## Sharing Your Work
+There's two options to share your work. You can share a direct link to this website with the 'Share URL' button. If you want to share a GIF of your visualization, click the 'Download as GIF' button. This button will capture your last 'session' from when you clicked "Play" till you clicked "Pause". It'll take a few seconds after you paused the animation for your GIF to render.
 
 ## About
 
