@@ -67,7 +67,7 @@ class Visualization extends React.Component {
 
 		for(let i = 0; i < this.edgeLength**2; i++){
 			data.push({'index': i, 'x': i%this.edgeLength, 'y': Math.floor(i/this.edgeLength), 
-				'state': 0, 'color': '', 'animate': false, 'invert': false})
+				'state': 0, 'color': '', 'animate': false, 'invert': false, 'store': {}})
 		}
 
 		this.setState({'data': data});
@@ -248,12 +248,14 @@ class Visualization extends React.Component {
 
 				// return this.props.rule(n)
 
-				
+				ctx.store = item.store
 
 				// tempitem.state = this.props.rule(n)
 				// console.log(this.props.rule(n))
 
 				let value = this.props.rule(ctx);
+
+				// tempitem.store = ctx.store
 
 				// console.log(ctx)
 

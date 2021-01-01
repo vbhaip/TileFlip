@@ -81,7 +81,7 @@ class App extends React.Component {
     this.edgeLength = 10;
     this.editor_val = `function rule(ctx){
 
-        }`;
+  }`;
     this.play = false;
     this.initdata = [];
     
@@ -157,6 +157,9 @@ class App extends React.Component {
     }
     if('play' in query && query['play'] === 'true'){
       this.setState({'play': true})
+    }
+    else if('play' in query && query['play'] === 'false'){
+      this.setState({'play': false})
     }
     if('state' in query && query['state'].length > 0){
       try{
@@ -336,6 +339,13 @@ class App extends React.Component {
       <div className="App">
 
         <div id='vis-container'>
+          { isMobile &&
+            <div>
+            <p>(Scroll down for the editor!)</p>
+            <br/>
+            </div>
+          }
+
           <Visualization id="viz" edgeLength={this.state.edgeLength} size={this.viswidth} rule={this.state.rule}
            play={this.state.play} refreshRate={this.state.refreshRate} initdata={this.state.initdata}
            setExportInitData={this.setExportInitData} setGifURL={this.setGifURL}

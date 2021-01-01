@@ -1,4 +1,4 @@
-# Rule Based Generator
+# TileFlip: Rule Based Generator
 
 ## How it works
 
@@ -42,4 +42,4 @@ There's two options to share your work. You can share a direct link to this webs
 
 ## About
 
-I was inspired to make this after checking out the really cool [tixy.land](https://tixy.land). If you're still have questions or come up with a cool animation that you want to share, reach out to me @vbhaip.
+I was inspired to make this after checking out the really cool [tixy.land](https://tixy.land). If you're still have questions or come up with a cool animation that you want to share, reach out to me at *contact @ vinaybhaip.com*.

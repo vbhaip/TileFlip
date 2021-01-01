@@ -2,6 +2,7 @@ import React from 'react'
 import ReactMarkdown from 'react-markdown'
 import gfm from 'remark-gfm'
 import Button from '@material-ui/core/Button';
+import {isMobile} from 'react-device-detect';
 
 class MoreInfo extends React.Component {
 	constructor(props){
@@ -14,17 +15,24 @@ class MoreInfo extends React.Component {
 				this.setState({'text': text})
 			})
 
+		if(isMobile){
+			this.margin = 10;
+		}
+		else{
+			this.margin = 20;
+		}
+
 	}
 
 	render(){
 
 		return (
-		<div style={{marginLeft: '20vw', marginRight: '20vw', 'color': 'white'}}>
+		<div style={{marginLeft: this.margin + 'vw', marginRight: this.margin + 'vw', 'color': 'white'}}>
 			<ReactMarkdown plugins={[gfm]}>
 				{this.state.text}
 			</ReactMarkdown>
 
-			<div style={{'textAlign': 'center'}}>
+			<div style={{'textAlign': 'center', 'marginTop': '2vh'}}>
 			<Button variant="contained" color="primary" href="#">
               Back
             </Button>
