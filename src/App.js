@@ -342,7 +342,6 @@ class App extends React.Component {
           { isMobile &&
             <div>
             <p>(Scroll down for the editor!)</p>
-            <br/>
             </div>
           }
 

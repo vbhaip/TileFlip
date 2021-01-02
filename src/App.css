@@ -68,6 +68,7 @@
 @media (pointer:none), (pointer:coarse) {
 
   #vis-container{
+    height: 110vh;
     width: 100vw;
     padding-bottom: 0;
   }
