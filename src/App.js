@@ -107,6 +107,8 @@ class App extends React.Component {
       }
     }
 
+    // this.state = {'rule': }
+
 
     this.initrule = this.getFunctionFromString(this.editor_val)
 
@@ -233,7 +235,7 @@ class App extends React.Component {
     }
 
 
-    if(this.state){
+    if(!this.state){
       return new Function('x', 'return null;')
     }
 
@@ -362,7 +364,7 @@ class App extends React.Component {
             valueLabelDisplay="auto"
             step={100}
             marks
-            min={200}
+            min={100}
             max={2000}
             value={this.state.refreshRate}
             style={{'width': '50%'}}
@@ -380,7 +382,7 @@ class App extends React.Component {
             step={1}
             marks
             min={4}
-            max={15}
+            max={20}
             value={this.state.edgeLength}
             onChange={this.updateResolution}
             style={{"width": "50%"}}/>

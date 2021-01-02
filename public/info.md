@@ -41,6 +41,8 @@ You can also adjust the size of the visualization and refresh rate on the side, 
 
 There's two options to share your work. You can share a direct link to this website with the 'Share URL' button. If you want to share a GIF of your visualization, click the 'Download as GIF' button. This button will capture your last 'session' from when you clicked "Play" till you clicked "Pause". It'll take a few seconds after you paused the animation for your GIF to render.
 
+Note that sharing the URL of your work will only preserve the initial state from when the animation was played, not the color. Also keep in mind that sharing long rules will sometimes not work due to the size limits on query strings in URLs.
+
 ## About
 
 I was inspired to make this by the really cool [tixy.land](https://tixy.land). If you still have questions or come up with a cool animation that you want to share, reach out to me at *contact @ vinaybhaip.com*.
