@@ -1,5 +1,7 @@
 # TileFlip: Rule-based Visualization Playground
 
+<img src="https://github.com/vbhaip/TileFlip/blob/main/public/animated-favicon.gif"></img>
+
 ## How it works
 
 This generator allows you to code one rule that applies to each tile leading to a visualization. The rule you write is a function that takes in an object context and returns the state of the tile from 0 to 1. For example, to make all tiles grey, you write
