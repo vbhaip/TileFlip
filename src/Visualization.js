@@ -70,7 +70,7 @@ class Visualization extends React.Component {
 				'state': 0, 'color': '', 'animate': false, 'invert': false, 'store': {}})
 		}
 
-		this.setState({'data': data});
+		this.setState({'data': data, 'time': 0});
 
 		this.margin = {'top': this.edgeLength*.1, 'bottom': this.edgeLength*.1, 'left': this.edgeLength*.1, 'right': this.edgeLength*.1}
 
