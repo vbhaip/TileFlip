@@ -27,10 +27,11 @@ function rule(ctx){
 | `ctx.corners` | # of corner neighbors where state === 1 | *int*, 0 - 4|
 | `ctx.sides` | # of side neighbors where state === 1 | *int*, 0 - 4|
 | `ctx.color` |flag you can set for changing the color | *str* |
-| `ctx.float_to_color(a)` | helper function to turn a float from 0 to 1 into a color [hsl value](https://en.wikipedia.org/wiki/HSL_and_HSV) | *function;* arg: *float*, 0 - 1|
+| `ctx.floatToColor(a)` | helper function to turn a float from 0 to 1 into a color [hsl value](https://en.wikipedia.org/wiki/HSL_and_HSV) | *function;* arg: *float*, 0 - 1|
 | `ctx.animate` | flag you can set for animating a tile (as opposed to just flipping states) | *bool* |
-| `ctx.invert` | flag you can set for the rendering software to set the tile's value to `1 - ctx.curr` (advanced option for when you want a non-white background) | *bool* |
 | `ctx.board` | raw states for all tiles | *array*, 0 - # of tiles |
+| `ctx.invert` | flag you can set for the rendering software to set the tile's value to `1 - ctx.curr` (advanced option for when you want a non-white background) | *bool* |
+| `ctx.store` | dictionary for each tile to preserve info across time (advanced option) | *dict* |
 
 
 Consider this as a reference to get you started, but you can always derive more complicated values. If you're still confused about these values, try it out in the editor and experiment!

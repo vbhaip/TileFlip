@@ -1,12 +1,12 @@
 {
   "files": {
-    "main.css": "/static/css/main.76bcef40.chunk.css",
-    "main.js": "/static/js/main.bf25b85c.chunk.js",
-    "main.js.map": "/static/js/main.bf25b85c.chunk.js.map",
+    "main.css": "/static/css/main.c80e7a7a.chunk.css",
+    "main.js": "/static/js/main.b7cc878f.chunk.js",
+    "main.js.map": "/static/js/main.b7cc878f.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.019a9cc8.js",
     "runtime-main.js.map": "/static/js/runtime-main.019a9cc8.js.map",
-    "static/js/2.fdb02ec0.chunk.js": "/static/js/2.fdb02ec0.chunk.js",
-    "static/js/2.fdb02ec0.chunk.js.map": "/static/js/2.fdb02ec0.chunk.js.map",
+    "static/js/2.0d041a4c.chunk.js": "/static/js/2.0d041a4c.chunk.js",
+    "static/js/2.0d041a4c.chunk.js.map": "/static/js/2.0d041a4c.chunk.js.map",
     "static/js/3.1c270bcf.chunk.js": "/static/js/3.1c270bcf.chunk.js",
     "static/js/3.1c270bcf.chunk.js.map": "/static/js/3.1c270bcf.chunk.js.map",
     "mode-livescript.js": "/00f32d088488515ac84b1ffe7fc0ec0d.js",
@@ -424,13 +424,13 @@
     "smarty.js": "/ff6e85bb753b94d4add40e79a70c2875.js",
     "io.js": "/ffb285847c77432bb38e9fbf9789d323.js",
     "index.html": "/index.html",
-    "static/css/main.76bcef40.chunk.css.map": "/static/css/main.76bcef40.chunk.css.map",
-    "static/js/2.fdb02ec0.chunk.js.LICENSE.txt": "/static/js/2.fdb02ec0.chunk.js.LICENSE.txt"
+    "static/css/main.c80e7a7a.chunk.css.map": "/static/css/main.c80e7a7a.chunk.css.map",
+    "static/js/2.0d041a4c.chunk.js.LICENSE.txt": "/static/js/2.0d041a4c.chunk.js.LICENSE.txt"
   },
   "entrypoints": [
     "static/js/runtime-main.019a9cc8.js",
-    "static/js/2.fdb02ec0.chunk.js",
-    "static/css/main.76bcef40.chunk.css",
-    "static/js/main.bf25b85c.chunk.js"
+    "static/js/2.0d041a4c.chunk.js",
+    "static/css/main.c80e7a7a.chunk.css",
+    "static/js/main.b7cc878f.chunk.js"
   ]
 }
