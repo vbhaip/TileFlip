@@ -1,6 +1,5 @@
 import React from 'react';
 import * as d3 from 'd3';
-// import 'gif.js'
 import GIF from 'gif.js';
 
 class Visualization extends React.Component {
@@ -21,22 +20,17 @@ class Visualization extends React.Component {
     };
 
     this.updateVis = this.updateVis.bind(this);
-
     this.computeNextState = this.computeNextState.bind(this);
-
     this.computeVal = this.computeVal.bind(this);
     this.computeNeighbors = this.computeNeighbors.bind(this);
-
     this.mod = this.mod.bind(this);
     this.floatToGrayscale = this.floatToGrayscale.bind(this);
     this.floatToHSL = this.floatToHSL.bind(this);
-
     this.refresh = this.refresh.bind(this);
-
     this.setup = this.setup.bind(this);
     this.drawChart = this.drawChart.bind(this);
-
     this.flipItem = this.flipItem.bind(this);
+    this.addGifItem = this.addGifItem.bind(this);
 
     this.setup();
     this.refresh();
@@ -49,10 +43,12 @@ class Visualization extends React.Component {
       debug: true
     });
 
-    this.addGifItem = this.addGifItem.bind(this);
+    
   }
 
   setup () {
+    //sets up data and necessary scales for creating the chart
+    //if initial data already exists, uses that information
     const data = [];
 
     this.edgeLength = this.props.edgeLength;
@@ -86,7 +82,6 @@ class Visualization extends React.Component {
     this.squareLength = this.size / this.edgeLength;
 
     // adjust vals for init data
-    console.log(this.props.initdata);
     Object.entries(this.props.initdata).forEach(([key, val]) => {
       try {
         data[parseInt(key)].state = parseFloat(val);
@@ -99,6 +94,8 @@ class Visualization extends React.Component {
   }
 
   updateVis () {
+    // called after every time step to update the visualization with new values
+
     // for elements that want to transition
     this.viscontainer
       .selectAll('.main-rect')
@@ -107,7 +104,6 @@ class Visualization extends React.Component {
       .filter((d, i) => d.animate)
       .transition()
       .duration((d, i) => {
-        // console.log(d.animate);
         return this.props.refreshRate;
       })
       .ease(d3.easeLinear)
@@ -129,6 +125,10 @@ class Visualization extends React.Component {
   }
 
   updateVisDiscreteFlip () {
+    // when the user manually flips a tile, this discretely flips
+    // different from updateVis to ensure that this is a discrete flip rather than
+    // animated
+
     this.viscontainer
       .selectAll('.main-rect')
       .data(this.state.data)
@@ -139,27 +139,23 @@ class Visualization extends React.Component {
   }
 
   computeVal (index) {
+    // computes state for given index
     if (index < 0 || index >= this.edgeLength ** 2) {
       return -1;
     } else {
-      // console.log(this.state.data[index].state)
       return this.state.data[index].state;
     }
   }
 
   mod (a, b) {
-    // needed otherwise -1 % 8  = -1
+    // needed otherwise negative num % positive num is negative
+    // ex. -1 % 8  = -1
     return ((a % b) + b) % b;
   }
 
   computeNeighbors (index) {
-    // goal is to return list of neighbors in formate
-    // [up, right, down, left]
-    // return actual vals
-    // wraps around to other side
-
-    // let r = Math.floor(index/this.edgeLength);
-    // let c = index%edgeLength
+    // returns state of neighbors in array starting at topleft
+    // edge neighbors wrap to other side
 
     const up = this.computeVal(this.mod((index - this.edgeLength), (this.edgeLength ** 2)));
     const down = this.computeVal(this.mod((index + this.edgeLength), (this.edgeLength ** 2)));
@@ -180,19 +176,20 @@ class Visualization extends React.Component {
   }
 
   floatToGrayscale (val) {
+    // returns grayscale color based off float 0-1
     // https://stackoverflow.com/questions/16179713/converting-float-values-to-a-grayscale-hex-color-value
-    // console.log(val)
     const dec = 255 * (1 - val);
     const encoding = ('0' + Number(parseInt(dec, 10)).toString(16)).slice(-2);
-    // console.log("#" + encoding.repeat(3))
     return '#' + encoding.repeat(3);
   }
 
   floatToHSL (val) {
+    // returns hsl color based off float 0-1
     return 'hsl(' + Math.round(360 * (val % 1)) + ', 100%, 50%)';
   }
 
   computeNextState () {
+    // computes values for data at next iteration of time step
     this.setState((prevState) => {
       const newState = prevState.data.map((item, index) => {
         const tempitem = { ...item };
@@ -213,8 +210,6 @@ class Visualization extends React.Component {
         ctx.neighbors = neighbors;
         ctx.board = prevState.data.map(x => x.state);
 
-        // console.log(neighbors)
-
         ctx.curr = item.state;
         ctx.ones = neighbors.filter(x => x === 1).length;
         ctx.zeroes = neighbors.filter(x => x === 0).length;
@@ -226,25 +221,15 @@ class Visualization extends React.Component {
         ctx.y = item.y;
         ctx.color = tempitem.color;
 
-        ctx.float_to_color = this.floatToHSL;
+        ctx.floatToColor = this.floatToHSL;
 
         ctx.resolution = this.props.edgeLength;
 
         ctx.t = prevState.time;
-        // console.log(this.floatToHSL)
-
-        // return this.props.rule(n)
 
         ctx.store = item.store;
 
-        // tempitem.state = this.props.rule(n)
-        // console.log(this.props.rule(n))
-
         const value = this.props.rule(ctx);
-
-        // tempitem.store = ctx.store
-
-        // console.log(ctx)
 
         if (typeof value === 'number' && !isNaN(value)) {
           tempitem.state = value;
@@ -275,15 +260,6 @@ class Visualization extends React.Component {
           tempitem.invert = false;
         }
 
-        // //substitute rule here
-
-        // if(neighbors.filter(x => x==1).length  === 0){
-        // tempitem.state =  1 - tempitem.state
-        // }
-        // else{
-        // tempitem.state =  tempitem.state
-        // }
-
         return tempitem;
       });
 
@@ -292,6 +268,7 @@ class Visualization extends React.Component {
   }
 
   flipItem (d) {
+    // flipping item manually, calls discrete fliip
     this.setState((prevState) => {
       const newState = prevState.data.map((item, index) => {
         if (index === d.index) {
@@ -303,8 +280,6 @@ class Visualization extends React.Component {
             tempitem.state = 0;
           }
 
-          // tempitem.state = 1 - tempitem.state;
-          // console.log(tempitem)
           return tempitem;
         } else {
           return item;
@@ -317,29 +292,23 @@ class Visualization extends React.Component {
   }
 
   drawChart () {
+    //initial drawing of chart
+
     // get data right away so we dont have to worry about async issues
 
     this.data = this.setup();
-    // console.log(this.edgeLength)
-    // console.log("hi")
+
     this.svg = d3.select('#' + this.props.id)
       .attr('width', this.size)
       .attr('height', this.size);
-    // .attr("width", this.size + this.margin.left + this.margin.right)
-    // .attr("height", this.size + this.margin.top + this.margin.bottom)
-
-    // console.log(this.svg.select('g').remove());
-
+ 
     this.svg.selectAll('g').remove();
     this.svg.selectAll('rect').remove();
 
     this.viscontainer = this.svg.append('g');
-    // console.log(this.viscontainer);
-    // console.log(this.state.data)
 
     const outerthis = this;
 
-    // console.log(this.state.data.length)
 
     // background color
     this.viscontainer
@@ -359,6 +328,7 @@ class Visualization extends React.Component {
       .attr('width', this.squareLength)
       .attr('height', this.squareLength);
 
+    // main rect color
     this.viscontainer
       .append('g')
       .selectAll('.main-rect')
@@ -382,8 +352,6 @@ class Visualization extends React.Component {
     if (!this.props.isMobile) {
       this.viscontainer.selectAll('.main-rect')
         .on('mousedown', (e, d) => {
-          // console.log(e)
-          // console.log(d)
           outerthis.isDown = true;
 
           outerthis.flipItem(d);
@@ -399,8 +367,6 @@ class Visualization extends React.Component {
     } else {
       this.viscontainer.selectAll('.main-rect')
         .on('touchstart', (e, d) => {
-          // console.log(e)
-          // console.log(d)
           outerthis.isDown = true;
 
           outerthis.flipItem(d);
@@ -417,15 +383,16 @@ class Visualization extends React.Component {
         outerthis.isDown = false;
       });
 
-    // this.refresh();
     this.setState({ ready: true });
   }
 
   componentDidMount () {
+    // draw chart once the component mounts so we can access svg
     this.drawChart();
   }
 
   refresh () {
+    // sets the timer for the refresh rate and calls the steps
     if (this.props.play && this.state.ready) {
       this.addGifItem();
       this.computeNextState();
@@ -436,13 +403,14 @@ class Visualization extends React.Component {
   }
 
   componentDidUpdate (prevProps) {
+    // deals with when we change some props that affects the visualization
+
     if (this.props.edgeLength !== prevProps.edgeLength) {
       this.drawChart();
     }
 
     if (this.props.play !== prevProps.play && this.props.play) {
       // we just switched the button on
-      // console.log(this.state.data)
       const toExport = {};
       for (let i = 0; i < this.state.data.length; i++) {
         if (this.state.data[i].state !== 0) {
@@ -461,8 +429,6 @@ class Visualization extends React.Component {
 	  });
 
       this.state.existingBlobs.map((item) => {
-        // console.log("yo");
-        // console.log(item)
         URL.revokeObjectURL(item);
       });
 
@@ -490,15 +456,14 @@ class Visualization extends React.Component {
 		    outerthis.props.setGifURL(gifURL);
         });
       }
-      // console.log(this.gif)
     }
 
-    // }
   }
 
   addGifItem () {
+    //add gif image to the gif we're maintaining
+
     if (this.state.existingBlobs.length > 50) {
-      // we dont want the gif to keep growing in size, so stop if it gets too big
       return;
     }
 

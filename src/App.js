@@ -21,7 +21,6 @@ import base64url from 'base64url';
 class App extends React.Component {
   constructor (props) {
     super(props);
-    this.handleRuleChange = this.handleRuleChange.bind(this);
     this.handleRuleChangeAce = this.handleRuleChangeAce.bind(this);
     this.updateResolution = this.updateResolution.bind(this);
     this.handlePlayChange = this.handlePlayChange.bind(this);
@@ -32,9 +31,6 @@ class App extends React.Component {
     this.setStateFromQuery = this.setStateFromQuery.bind(this);
     this.progressExample = this.progressExample.bind(this);
 
-    // this.downloadGif = this.downloadGif.bind(this);
-
-    // this.temp = this.temp.bind(this);
 
     this.rawquery = window.location.search.slice(1);
 
@@ -42,8 +38,6 @@ class App extends React.Component {
       this.rawquery = window.location.hash;
       this.rawquery = this.rawquery.slice(this.rawquery.indexOf('?') + 1);
     }
-
-    console.log(this.rawquery);
 
     this.query = qs.parse(this.rawquery);
 
@@ -55,7 +49,6 @@ class App extends React.Component {
         // get rid of label at the beginning
         this.examples = this.examples.map((item) => item.slice(item.indexOf(':') + 1));
 
-        console.log(this.examples);
         this.curr_example = 0;
 
         // no parameters means load example
@@ -110,12 +103,10 @@ class App extends React.Component {
       gifURL: ''
     };
 
-    // console.log(this.initdata)
 
-    // if(this.initdata.length === this.edgeLength){
     this.state.initdata = this.initdata;
-    // }
 
+    //adjust sizes of elements if mobile
     if (isMobile) {
       this.viswidth = window.innerWidth * 0.65;
       this.editorwidth = window.innerWidth * 0.7;
@@ -128,7 +119,10 @@ class App extends React.Component {
   }
 
   setStateFromQuery (query) {
-    console.log(query);
+    /*
+    takes a query in the form of a dictionary and
+    sets the state accordingly
+    */
 
     if ('refreshRate' in query) {
       this.setState({ refreshRate: parseInt(query.refreshRate) });
@@ -163,6 +157,7 @@ class App extends React.Component {
   }
 
   progressExample () {
+    // iterates through examples on button press
     this.setState((prevState) => {
       const newExampleInd = (prevState.curr_example + 1) % prevState.examples.length;
       this.setStateFromQuery(qs.parse(prevState.examples[newExampleInd]));
@@ -177,13 +172,13 @@ class App extends React.Component {
   }
 
   updateRefresh (e, val) {
-    console.log(val);
     this.setState({
       refreshRate: val
     });
   }
 
   getFunctionFromString (val) {
+    // given a string, gets an according function that it corresponds to
     try {
       const f = new Function('x', `
         try{
@@ -209,38 +204,12 @@ class App extends React.Component {
     }
 
     // return whatever is existing as a rule
-
     return this.state.rule;
   }
 
-  handleRuleChange (e) {
-    console.log(e);
-    // console.log(e.target.value)
-
-    try {
-      const f = new Function('ctx', `
-        try{
-          ${e.target.value.replace(/\n/g, '')};
-        }
-        catch(error){
-          return error;
-        }
-        `);
-
-      this.setState({ rule: f });
-
-      console.log(f);
-    } catch (error) {
-      console.log(error);
-    }
-  }
-
   handleRuleChangeAce (val) {
+    // when editor changes it's text, finds the corresponding function
     this.setState({ editorVal: val });
-    // val = val.slice(val.indexOf('{') + 1, val.indexOf('}')).trim();
-    console.log(val);
-
-    console.log(base64url.encode(val));
 
     const f = this.getFunctionFromString(val);
 
@@ -263,6 +232,7 @@ class App extends React.Component {
   }
 
   shareURL () {
+    //exports current parameters into query string
     const params = {};
 
     params.refreshRate = this.state.refreshRate;
@@ -278,8 +248,6 @@ class App extends React.Component {
     currURL = currURL.slice(0, currURL.lastIndexOf('/'));
 
     const newURL = currURL + '?' + exportQs;
-
-    console.log(newURL);
 
     window.history.pushState('', '', newURL);
 
@@ -372,9 +340,7 @@ class App extends React.Component {
           </a>
 
         </div>
-        {
-        // <TextField variant="outlined" onChange={this.handleRuleChange} multiline={true}/>
-        }
+
         <div id='controls-container'>
 
           <AceEditor
