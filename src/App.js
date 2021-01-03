@@ -1,29 +1,27 @@
 import './App.css';
-import React from 'react'
+import React from 'react';
 import Button from '@material-ui/core/Button';
-import Slider from '@material-ui/core/Slider'
-import Visualization from './Visualization'
+import Slider from '@material-ui/core/Slider';
+import Visualization from './Visualization';
 import { withTheme } from '@material-ui/core/styles';
-import {isMobile} from 'react-device-detect';
+import { isMobile } from 'react-device-detect';
 
+import AceEditor from 'react-ace';
 
-import AceEditor from "react-ace";
-
-import "ace-builds/src-noconflict/mode-javascript";
-import "ace-builds/src-noconflict/theme-monokai";
+import 'ace-builds/src-noconflict/mode-javascript';
+import 'ace-builds/src-noconflict/theme-monokai';
 // import "ace-builds/src-noconflict/ext-language_tools"
 
-import "ace-builds/webpack-resolver";
+import 'ace-builds/webpack-resolver';
 
-import qs from 'qs'
+import qs from 'qs';
 
-import base64url from 'base64url'
+import base64url from 'base64url';
 
 class App extends React.Component {
-
-  constructor(props){
-    super(props)
-    this.handleRuleChange = this.handleRuleChange.bind(this)
+  constructor (props) {
+    super(props);
+    this.handleRuleChange = this.handleRuleChange.bind(this);
     this.handleRuleChangeAce = this.handleRuleChangeAce.bind(this);
     this.updateResolution = this.updateResolution.bind(this);
     this.handlePlayChange = this.handlePlayChange.bind(this);
@@ -36,92 +34,81 @@ class App extends React.Component {
 
     // this.downloadGif = this.downloadGif.bind(this);
 
-
     // this.temp = this.temp.bind(this);
 
-    this.rawquery = window.location.search.slice(1)
+    this.rawquery = window.location.search.slice(1);
 
-    if(this.rawquery === '' &&  window.location.hash.includes('?')){
+    if (this.rawquery === '' && window.location.hash.includes('?')) {
       this.rawquery = window.location.hash;
-      this.rawquery = this.rawquery.slice(this.rawquery.indexOf('?') + 1)
+      this.rawquery = this.rawquery.slice(this.rawquery.indexOf('?') + 1);
     }
 
-    console.log(this.rawquery)
+    console.log(this.rawquery);
 
     this.query = qs.parse(this.rawquery);
-
 
     fetch(process.env.PUBLIC_URL + '/examples.txt')
       .then(response => response.text())
       .then((text) => {
-        this.examples = text.split("\n\n")
+        this.examples = text.split('\n\n');
 
-        //get rid of label at the beginning
-        this.examples = this.examples.map((item) => item.slice(item.indexOf(":")+1))
+        // get rid of label at the beginning
+        this.examples = this.examples.map((item) => item.slice(item.indexOf(':') + 1));
 
         console.log(this.examples);
         this.curr_example = 0;
 
         // no parameters means load example
-        if(Object.keys(this.query).length === 0){
-          let query = qs.parse(this.examples[this.curr_example]);
+        if (Object.keys(this.query).length === 0) {
+          const query = qs.parse(this.examples[this.curr_example]);
           this.setStateFromQuery(query);
         }
 
-        this.setState({'curr_example': 0, 'examples': this.examples})
+        this.setState({ curr_example: 0, examples: this.examples });
+      });
 
-      })
-
-
-    
-
-
-    //defaults
+    // defaults
     this.refreshRate = 1000;
     this.edgeLength = 10;
-    this.editor_val = `function rule(ctx){
+    this.editorVal = `function rule(ctx){
 
   }`;
     this.play = false;
     this.initdata = [];
-    
 
-    if('refreshRate' in this.query){
-      this.refreshRate = parseInt(this.query['refreshRate'])
+    if ('refreshRate' in this.query) {
+      this.refreshRate = parseInt(this.query.refreshRate);
     }
-    if('resolution' in this.query){
-      this.edgeLength = parseInt(this.query['resolution'])
+    if ('resolution' in this.query) {
+      this.edgeLength = parseInt(this.query.resolution);
     }
-    if('code' in this.query){
-      this.editor_val = base64url.decode(this.query['code'])
+    if ('code' in this.query) {
+      this.editorVal = base64url.decode(this.query.code);
     }
-    if('play' in this.query && this.query['play'] === 'true'){
+    if ('play' in this.query && this.query.play === 'true') {
       this.play = true;
     }
-    if('state' in this.query){
-      try{
-        this.initdata = JSON.parse(this.query['state'])
-      }
-      catch(e){
+    if ('state' in this.query) {
+      try {
+        this.initdata = JSON.parse(this.query.state);
+      } catch (e) {
         console.log(e);
       }
     }
 
     // this.state = {'rule': }
 
-
-    this.initrule = this.getFunctionFromString(this.editor_val)
-
+    this.initrule = this.getFunctionFromString(this.editorVal);
 
     this.state = {
-    'rule': this.initrule,
-    'edgeLength': this.edgeLength,
-    'play': this.play,
-    'editor_val': this.editor_val,
-    'refreshRate': this.refreshRate,
-    'exportInitData': '',
-    'gifURL': ''
-    }
+      rule: this.initrule,
+      edgeLength: this.edgeLength,
+      play: this.play,
+      editorVal: this.editorVal,
+      refreshRate: this.refreshRate,
+      exportInitData: '',
+      gifURL: ''
+    };
 
     // console.log(this.initdata)
 
@@ -129,93 +116,78 @@ class App extends React.Component {
     this.state.initdata = this.initdata;
     // }
 
-    if(isMobile){
-      this.viswidth = window.innerWidth*.65
-      this.editorwidth = window.innerWidth*0.7
+    if (isMobile) {
+      this.viswidth = window.innerWidth * 0.65;
+      this.editorwidth = window.innerWidth * 0.7;
       this.fontSize = 10;
-    }
-    else{
-      this.viswidth = window.innerHeight*.4
-      this.editorwidth = window.innerWidth*0.4
+    } else {
+      this.viswidth = window.innerHeight * 0.4;
+      this.editorwidth = window.innerWidth * 0.4;
       this.fontSize = 14;
     }
-
   }
 
-  setStateFromQuery(query){
+  setStateFromQuery (query) {
+    console.log(query);
 
-    console.log(query)
-
-    if('refreshRate' in query){
-      this.setState({'refreshRate': parseInt(query['refreshRate'])})
+    if ('refreshRate' in query) {
+      this.setState({ refreshRate: parseInt(query.refreshRate) });
     }
-    if('resolution' in query){
-      this.setState({'edgeLength': parseInt(query['resolution'])})
+    if ('resolution' in query) {
+      this.setState({ edgeLength: parseInt(query.resolution) });
     }
-    if('code' in query){
-      let editor_val = base64url.decode(query['code']);
-      this.setState({'editor_val' : editor_val});
-      this.setState({'rule': this.getFunctionFromString(editor_val)})
+    if ('code' in query) {
+      const editorVal = base64url.decode(query.code);
+      this.setState({ editorVal: editorVal });
+      this.setState({ rule: this.getFunctionFromString(editorVal) });
     }
-    if('play' in query && query['play'] === 'true'){
-      this.setState({'play': true})
+    if ('play' in query && query.play === 'true') {
+      this.setState({ play: true });
+    } else if ('play' in query && query.play === 'false') {
+      this.setState({ play: false });
     }
-    else if('play' in query && query['play'] === 'false'){
-      this.setState({'play': false})
-    }
-    if('state' in query && query['state'].length > 0){
-      try{
-        this.setState({'initdata': JSON.parse(query['state'])});
-      }
-      catch(e){
+    if ('state' in query && query.state.length > 0) {
+      try {
+        this.setState({ initdata: JSON.parse(query.state) });
+      } catch (e) {
         console.log(e);
       }
-
-    }
-    else{
-      //if no state is set
+    } else {
+      // if no state is set
       this.initdata = {};
-      for(let i = 0; i < this.edgeLength**2; i++){
+      for (let i = 0; i < this.edgeLength ** 2; i++) {
         this.initdata[i] = 0;
       }
-      this.setState({'initdata': this.initdata});
+      this.setState({ initdata: this.initdata });
     }
-
-
-
-
   }
 
-  progressExample(){
+  progressExample () {
     this.setState((prevState) => {
-      let new_example_ind = (prevState.curr_example + 1) % prevState.examples.length;
-      this.setStateFromQuery(qs.parse(prevState.examples[new_example_ind]));
-      return {'curr_example': new_example_ind}
+      const newExampleInd = (prevState.curr_example + 1) % prevState.examples.length;
+      this.setStateFromQuery(qs.parse(prevState.examples[newExampleInd]));
+      return { curr_example: newExampleInd };
     });
-
   }
 
-
-  setExportInitData(val){
+  setExportInitData (val) {
     this.setState({
-      'exportInitData': val
-    })
+      exportInitData: val
+    });
   }
 
-  updateRefresh(e, val){
+  updateRefresh (e, val) {
     console.log(val);
     this.setState({
-      'refreshRate': val
+      refreshRate: val
     });
   }
 
-  getFunctionFromString(val){
-
-    try{
-
-      let f = new Function('x', `
+  getFunctionFromString (val) {
+    try {
+      const f = new Function('x', `
         try{
-          // ${val.replace(/\n/g, "")};
+          // ${val.replace(/\n/g, '')};
           let f = ${val}
 
           return f(x);
@@ -223,111 +195,99 @@ class App extends React.Component {
         catch(error){
           return error;
         }
-        `)
+        `);
       // let f = null;
 
       return f;
       // this.setState({'rule': f});
-
-    }
-    catch(error){
-      console.log(error)
+    } catch (error) {
+      console.log(error);
     }
 
-
-    if(!this.state){
-      return new Function('x', 'return null;')
+    if (!this.state) {
+      return new Function('x', 'return null;');
     }
 
-    //return whatever is existing as a rule 
+    // return whatever is existing as a rule
 
     return this.state.rule;
-
   }
 
-  handleRuleChange(e) {
-    console.log(e)
+  handleRuleChange (e) {
+    console.log(e);
     // console.log(e.target.value)
 
-    try{
-
-      let f = new Function('ctx', `
+    try {
+      const f = new Function('ctx', `
         try{
-          ${e.target.value.replace(/\n/g, "")};
+          ${e.target.value.replace(/\n/g, '')};
         }
         catch(error){
           return error;
         }
-        `)
+        `);
 
-      this.setState({'rule': f});
+      this.setState({ rule: f });
 
-      console.log(f)
+      console.log(f);
+    } catch (error) {
+      console.log(error);
     }
-    catch(error){
-      console.log(error)
-    }
-
   }
 
-
-  handleRuleChangeAce(val) {
-    this.setState({'editor_val': val})
+  handleRuleChangeAce (val) {
+    this.setState({ editorVal: val });
     // val = val.slice(val.indexOf('{') + 1, val.indexOf('}')).trim();
-    console.log(val)
+    console.log(val);
 
-    console.log(base64url.encode(val))
+    console.log(base64url.encode(val));
 
-    let f = this.getFunctionFromString(val);
-    
-    this.setState({'rule': f});
+    const f = this.getFunctionFromString(val);
 
-
-
+    this.setState({ rule: f });
   }
 
-  updateResolution(e, val){
+  updateResolution (e, val) {
     this.setState({
-      'edgeLength': val,
-      'initdata': []
-    })
+      edgeLength: val,
+      initdata: []
+    });
   }
 
-  handlePlayChange(e){
-    this.setState((prevState) =>{
+  handlePlayChange (e) {
+    this.setState((prevState) => {
       return ({
-        'play': !prevState.play
+        play: !prevState.play
       });
     });
   }
 
-  shareURL(){
-    let params = {};
+  shareURL () {
+    const params = {};
 
-    params['refreshRate'] = this.state.refreshRate;
-    params['play'] = true
-    params['resolution'] = this.state.edgeLength
-    params['code'] = base64url.encode(this.state.editor_val)
-    params['state'] = this.state.exportInitData;
+    params.refreshRate = this.state.refreshRate;
+    params.play = true;
+    params.resolution = this.state.edgeLength;
+    params.code = base64url.encode(this.state.editorVal);
+    params.state = this.state.exportInitData;
 
-    let export_qs = qs.stringify(params);
+    const exportQs = qs.stringify(params);
 
-    let curr_url = window.location.toString();
+    let currURL = window.location.toString();
 
-    curr_url = curr_url.slice(0, curr_url.lastIndexOf('/'))
+    currURL = currURL.slice(0, currURL.lastIndexOf('/'));
 
-    let new_url = curr_url + '?' + export_qs;
+    const newURL = currURL + '?' + exportQs;
 
-    console.log(new_url)
+    console.log(newURL);
 
-    window.history.pushState('', '', new_url);
+    window.history.pushState('', '', newURL);
 
-    window.prompt("Copy to share (Ctrl+C, Enter)",new_url)
-
+    window.prompt('Copy to share (Ctrl+C, Enter)', newURL);
   }
 
-  setGifURL(item){
-    this.setState({'gifURL': item})
+  setGifURL (item) {
+    this.setState({ gifURL: item });
   }
 
   // temp(e){
@@ -335,8 +295,7 @@ class App extends React.Component {
   //     .innerHTML = "hi"
   // }
 
-
-  render(){
+  render () {
     return (
       <div className="App">
 
@@ -352,12 +311,12 @@ class App extends React.Component {
            setExportInitData={this.setExportInitData} setGifURL={this.setGifURL}
            isMobile={isMobile}/>
 
-
-           <p style={{'color':this.props.theme.palette.lightText.main, 
-           'fontFamily': this.props.theme.typography.fontFamily}}>
+           <p style={{
+             color: this.props.theme.palette.lightText.main,
+             fontFamily: this.props.theme.typography.fontFamily
+           }}>
               Refresh Rate (ms)
            </p>
-
 
            <Slider
             defaultValue={this.refreshRate}
@@ -367,12 +326,14 @@ class App extends React.Component {
             min={100}
             max={2000}
             value={this.state.refreshRate}
-            style={{'width': '50%'}}
+            style={{ width: '50%' }}
             onChange={this.updateRefresh}
            />
-          
-           <p style={{'color':this.props.theme.palette.lightText.main, 
-           'fontFamily': this.props.theme.typography.fontFamily}}>
+
+           <p style={{
+             color: this.props.theme.palette.lightText.main,
+             fontFamily: this.props.theme.typography.fontFamily
+           }}>
               Resolution
            </p>
 
@@ -385,14 +346,13 @@ class App extends React.Component {
             max={20}
             value={this.state.edgeLength}
             onChange={this.updateResolution}
-            style={{"width": "50%"}}/>
-
+            style={{ width: '50%' }}/>
 
           <br/>
           <br/>
 
             <Button variant="contained" color="primary" onClick={this.handlePlayChange}>
-              {this.state.play ? "Pause" : "Play"}
+              {this.state.play ? 'Pause' : 'Play'}
             </Button>
 
           <br/>
@@ -403,18 +363,17 @@ class App extends React.Component {
 
           <br/>
           <br/>
-          
-          <a target="_blank" href={this.state.gifURL === '' ? false : this.state.gifURL} download="evolution.gif" style={{'color': 'inherit', 'text-decoration': 'none'}}>
+
+          <a target="_blank" href={this.state.gifURL === '' ? false : this.state.gifURL} download="evolution.gif" style={{ color: 'inherit', 'text-decoration': 'none' }}>
             <Button variant="contained" color="primary" download={this.state.gifURL} disabled={this.state.gifURL === ''}
             target="_blank">
-                {this.state.gifURL !== '' ? "Download as GIF" : "GIF not ready"}
+                {this.state.gifURL !== '' ? 'Download as GIF' : 'GIF not ready'}
               </Button>
           </a>
-                
 
         </div>
         {
-        //<TextField variant="outlined" onChange={this.handleRuleChange} multiline={true}/>
+        // <TextField variant="outlined" onChange={this.handleRuleChange} multiline={true}/>
         }
         <div id='controls-container'>
 
@@ -429,18 +388,18 @@ class App extends React.Component {
             showPrintMargin={true}
             showGutter={true}
             highlightActiveLine={true}
-            value={this.state.editor_val}
-            height={window.innerHeight*.5}
+            value={this.state.editorVal}
+            height={window.innerHeight * 0.5}
             setOptions={{
-            enableBasicAutocompletion: true,
-            enableLiveAutocompletion: true,
-            enableSnippets: false,
-            showLineNumbers: !isMobile,
-            showGutter: !isMobile,
-            tabSize: 2,
+              enableBasicAutocompletion: true,
+              enableLiveAutocompletion: true,
+              enableSnippets: false,
+              showLineNumbers: !isMobile,
+              showGutter: !isMobile,
+              tabSize: 2
             }}
 
-            width={this.editorwidth + "px"}
+            width={this.editorwidth + 'px'}
 
             />
 
@@ -454,14 +413,11 @@ class App extends React.Component {
             <Button variant="contained" color="secondary" href="#help">
               Help/More Info
             </Button>
-                      
-          
 
           </div>
       </div>
     );
   }
-
 }
 
 export default withTheme(App);

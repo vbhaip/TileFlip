@@ -1,29 +1,24 @@
-import React from 'react'
-import App from './App'
-import MoreInfo from './MoreInfo'
-import { createMuiTheme } from '@material-ui/core/styles';
-import { ThemeProvider } from '@material-ui/core/styles';
-import { withTheme } from '@material-ui/core/styles';
- 
+import React from 'react';
+import App from './App';
+import MoreInfo from './MoreInfo';
+import { createMuiTheme, ThemeProvider, withTheme } from '@material-ui/core/styles';
 
 import {
   // BrowserRouter,
   HashRouter,
   Switch,
-  Route,
+  Route
   // Link,
   // useLocation
-} from "react-router-dom";
-
-
+} from 'react-router-dom';
 
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#9B6A6C',
+      main: '#9B6A6C'
     },
     secondary: {
-      main: '#6DC0D5',
+      main: '#6DC0D5'
     },
     error: {
     	main: '#c1666b'
@@ -34,7 +29,7 @@ const theme = createMuiTheme({
     black: {
     	main: '#020202'
     },
-    lightText:  {
+    lightText: {
     	main: '#F7F0F5'
     }
   },
@@ -44,9 +39,8 @@ const theme = createMuiTheme({
 });
 
 class Router extends React.Component {
-
-	render() {
-		return (
+  render () {
+    return (
 
 			<HashRouter>
 				<Switch>
@@ -62,8 +56,8 @@ class Router extends React.Component {
 					</Route>
 				</Switch>
 			</HashRouter>
-			)
-	}
+    );
+  }
 }
 
 export default withTheme(Router);
