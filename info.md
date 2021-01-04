@@ -44,9 +44,12 @@ There's two options to share your work. You can share a direct link to this webs
 
 Note that sharing the URL of your work will only preserve the initial state from when the animation was played, not the color. Also keep in mind that sharing long rules will sometimes not work due to the size limits on query strings in URLs.
 
+
+#### ⭐⭐⭐ Share your visualizations [here](https://github.com/vbhaip/TileFlip/discussions)! ⭐⭐⭐
+
 ## About
 
-I was inspired to make this by the really cool [tixy.land](https://tixy.land). If you still have questions or come up with a cool animation that you want to share, reach out to me at *contact @ vinaybhaip.com*.
+I was inspired to make this by the really cool [tixy.land](https://tixy.land). If you still have questions, reach out to me at *contact @ vinaybhaip.com*.
 
 ##
 Star this respository on [Github](https://github.com/vbhaip/simulation-generation)!
