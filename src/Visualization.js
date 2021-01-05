@@ -210,7 +210,7 @@ class Visualization extends React.Component {
         ctx.neighbors = neighbors;
         ctx.board = prevState.data.map(x => x.state);
 
-        ctx.curr = item.state;
+        ctx.value = item.state;
         ctx.ones = neighbors.filter(x => x === 1).length;
         ctx.zeroes = neighbors.filter(x => x === 0).length;
         ctx.corners = neighbors.filter((x, i) => { return x === 1 && (i % 2 === 0); }).length;
@@ -234,8 +234,8 @@ class Visualization extends React.Component {
         if (typeof value === 'number' && !isNaN(value)) {
           tempitem.state = value;
         } else {
-          // this accounts if they directly set ctx.curr
-          tempitem.state = ctx.curr;
+          // this accounts if they directly set ctx.value
+          tempitem.state = ctx.value;
         }
 
         if (typeof value === 'boolean') {
