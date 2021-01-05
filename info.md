@@ -15,7 +15,7 @@ function rule(ctx){
 
 | item | description| type |
 |--|--| -- |
-| `ctx.curr` | current tile's value | *float*, 0 - 1 |
+| `ctx.value` | current tile's value | *float*, 0 - 1 |
 | `ctx.index` | unique index of tile | *int*, 0 - # of tiles |
 | `ctx.x, y` | x and y location of tile | *int*, 0 - # of tiles on each side |
 | `ctx.t` | current time step | *int*, 0 - ∞|
@@ -30,7 +30,7 @@ function rule(ctx){
 | `ctx.floatToColor(a)` | helper function to turn a float from 0 to 1 into a color [hsl value](https://en.wikipedia.org/wiki/HSL_and_HSV) | *function;* arg: *float*, 0 - 1|
 | `ctx.animate` | flag you can set for animating a tile (as opposed to just flipping states) | *bool* |
 | `ctx.board` | raw states for all tiles | *array*, 0 - # of tiles |
-| `ctx.invert` | flag you can set for the rendering software to set the tile's value to `1 - ctx.curr` (advanced option for when you want a non-white background) | *bool* |
+| `ctx.invert` | flag you can set for the rendering software to set the tile's value to `1 - ctx.value` (advanced option for when you want a non-white background) | *bool* |
 | `ctx.store` | dictionary for each tile to preserve info across time (advanced option) | *dict* |
 
 
