@@ -2,7 +2,7 @@
 
 <img src="https://github.com/vbhaip/TileFlip/blob/main/public/animated-favicon.gif"></img>
 
-Create your own visualization at [tileflip.xyz](https://tileflip.xyz).
+Create your own visualization at [TileFlip](https://vinaybhaip.com/TileFlip).
 
 ## How it works
 
