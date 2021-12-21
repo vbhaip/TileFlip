@@ -7,9 +7,12 @@ import Router from './Router';
 
 // import Router from './Router'
 
+// https://stackoverflow.com/questions/58282540/why-is-a-github-page-url-changing-on-load-causing-the-public-resource-path-to-b
+const routerBaseName = process.env.PUBLIC_URL;
+
 ReactDOM.render(
   <React.StrictMode>
-    <Router />
+    <Router basename={routerBaseName} />
   </React.StrictMode>,
   document.getElementById('root')
 );
