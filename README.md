@@ -8,7 +8,7 @@ Create your own visualization at [TileFlip](https://vinaybhaip.com/TileFlip).
 
 This generator allows you to code one rule that applies to each tile leading to a visualization. The rule you write is a function that takes in an object context and returns the state of the tile from 0 to 1. For example, to make all tiles grey, you write
 
-```
+```javascript
 function rule(ctx){
     return 0.5;
 }
@@ -52,4 +52,4 @@ Note that sharing the URL of your work will only preserve the initial state from
 
 ## About
 
-I was inspired to make this by the really cool [tixy.land](https://tixy.land). If you still have questions, reach out to me at *contact @ vinaybhaip.com*.
+I was inspired to make this by the really cool [tixy.land](https://tixy.land). If you still have questions, reach out to me at *[contact@vinaybhaip.com]( mailto:contact@vinaybhaip.com)*.
